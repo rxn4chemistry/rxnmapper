@@ -1,0 +1,46 @@
+rxn4chemistry package
+=====================
+
+Submodules
+----------
+
+rxn4chemistry.callbacks module
+------------------------------
+
+.. automodule:: rxn4chemistry.callbacks
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxn4chemistry.core module
+-------------------------
+
+.. automodule:: rxn4chemistry.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxn4chemistry.decorators module
+-------------------------------
+
+.. automodule:: rxn4chemistry.decorators
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxn4chemistry.urls module
+-------------------------
+
+.. automodule:: rxn4chemistry.urls
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: rxn4chemistry
+   :members:
+   :undoc-members:
+   :show-inheritance:

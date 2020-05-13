@@ -1,0 +1,46 @@
+rxnmapper package
+=================
+
+Submodules
+----------
+
+rxnmapper.attention module
+--------------------------
+
+.. automodule:: rxnmapper.attention
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxnmapper.core module
+---------------------
+
+.. automodule:: rxnmapper.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxnmapper.smiles\_utils module
+------------------------------
+
+.. automodule:: rxnmapper.smiles_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+rxnmapper.tokenization\_smiles module
+-------------------------------------
+
+.. automodule:: rxnmapper.tokenization_smiles
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: rxnmapper
+   :members:
+   :undoc-members:
+   :show-inheritance:

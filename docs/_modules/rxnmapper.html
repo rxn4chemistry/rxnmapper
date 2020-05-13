@@ -1,0 +1,710 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rxnmapper package &mdash; rxnmapper 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="rxnmapper" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rxnmapper
+          
+
+          
+            
+            <img src="../_static/logo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">rxnmapper</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">rxnmapper package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rxnmapper.attention">rxnmapper.attention module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rxnmapper.core">rxnmapper.core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rxnmapper.smiles_utils">rxnmapper.smiles_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rxnmapper.tokenization_smiles">rxnmapper.tokenization_smiles module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rxnmapper">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rxnmapper</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">rxnmapper</a> &raquo;</li>
+        
+      <li>rxnmapper package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/_modules/rxnmapper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rxnmapper-package">
+<h1>rxnmapper package<a class="headerlink" href="#rxnmapper-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-rxnmapper.attention">
+<span id="rxnmapper-attention-module"></span><h2>rxnmapper.attention module<a class="headerlink" href="#module-rxnmapper.attention" title="Permalink to this headline">¶</a></h2>
+<p>Attention handling.</p>
+<dl class="class">
+<dt id="rxnmapper.attention.AttentionScorer">
+<em class="property">class </em><code class="sig-prename descclassname">rxnmapper.attention.</code><code class="sig-name descname">AttentionScorer</code><span class="sig-paren">(</span><em class="sig-param">rxn_smiles: str, tokens: List[str], attentions: numpy.ndarray, special_tokens: List[str] = ['[CLS]', '[SEP]'], attention_multiplier: float = 90.0, mask_mapped_product_atoms: bool = True, mask_mapped_reactant_atoms: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.adjacency_matrix_products">
+<em class="property">property </em><code class="sig-name descname">adjacency_matrix_products</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.adjacency_matrix_products" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.adjacency_matrix_reactants">
+<em class="property">property </em><code class="sig-name descname">adjacency_matrix_reactants</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.adjacency_matrix_reactants" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.adjacent_atom_attentions">
+<em class="property">property </em><code class="sig-name descname">adjacent_atom_attentions</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.adjacent_atom_attentions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.atom_attentions">
+<em class="property">property </em><code class="sig-name descname">atom_attentions</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.atom_attentions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.atom_num">
+<code class="sig-name descname">atom_num</code><span class="sig-paren">(</span><em class="sig-param">token_ind</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#rxnmapper.attention.AttentionScorer.atom_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the atom number corresponding to a token</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.atom_type_masked_attentions">
+<em class="property">property </em><code class="sig-name descname">atom_type_masked_attentions</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.atom_type_masked_attentions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.combined_attentions">
+<em class="property">property </em><code class="sig-name descname">combined_attentions</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.combined_attentions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine pxr and rxp</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.combined_attentions_filt">
+<em class="property">property </em><code class="sig-name descname">combined_attentions_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.combined_attentions_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine pxr_filt and rxp_filt</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.combined_attentions_filt_atoms">
+<em class="property">property </em><code class="sig-name descname">combined_attentions_filt_atoms</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.combined_attentions_filt_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine pxr_filt and rxp_filt</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.combined_attentions_filt_atoms_same_type">
+<em class="property">property </em><code class="sig-name descname">combined_attentions_filt_atoms_same_type</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.combined_attentions_filt_atoms_same_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine pxr_filt and rxp_filt</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.generate_attention_guided_pxr_atom_mapping">
+<code class="sig-name descname">generate_attention_guided_pxr_atom_mapping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.generate_attention_guided_pxr_atom_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate attention guided product to reactant atom mapping.
+:param zero_set_p: If True, the attention from product atoms that are already</p>
+<blockquote>
+<div><p>assigned to an atom in the reactants is set to 0.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>zero_set_r</strong> – If True, the attention to reactant atoms that are already
+assigned to an atom in the reactants is set to 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.get_atom_type_mask">
+<code class="sig-name descname">get_atom_type_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.get_atom_type_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.get_neighboring_atoms">
+<code class="sig-name descname">get_neighboring_atoms</code><span class="sig-paren">(</span><em class="sig-param">atom_num</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.get_neighboring_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the atom_nums neighboring the desired atom</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.get_neighboring_attentions">
+<code class="sig-name descname">get_neighboring_attentions</code><span class="sig-paren">(</span><em class="sig-param">atom_num</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="headerlink" href="#rxnmapper.attention.AttentionScorer.get_neighboring_attentions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a vector of shape (n_atoms,) representing the neighboring attentions to an atom number.</p>
+<p>Non-zero attentions are the attentions of neighboring atoms</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.get_precursors_atom_types">
+<code class="sig-name descname">get_precursors_atom_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.get_precursors_atom_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.get_product_atom_types">
+<code class="sig-name descname">get_product_atom_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.get_product_atom_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.is_atom">
+<code class="sig-name descname">is_atom</code><span class="sig-paren">(</span><em class="sig-param">token_ind</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#rxnmapper.attention.AttentionScorer.is_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether token is an atom</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pnums">
+<em class="property">property </em><code class="sig-name descname">pnums</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pnums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the product tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pnums_atoms">
+<em class="property">property </em><code class="sig-name descname">pnums_atoms</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pnums_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the product tokens, without the SEP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pnums_filt">
+<em class="property">property </em><code class="sig-name descname">pnums_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pnums_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the product tokens, without the SEP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.ptokens">
+<em class="property">property </em><code class="sig-name descname">ptokens</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.ptokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.ptokens_filt">
+<em class="property">property </em><code class="sig-name descname">ptokens_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.ptokens_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Product tokens without special tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pxr">
+<em class="property">property </em><code class="sig-name descname">pxr</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pxr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pxr_filt">
+<em class="property">property </em><code class="sig-name descname">pxr_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pxr_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>PXR without the special tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.pxr_filt_atoms">
+<em class="property">property </em><code class="sig-name descname">pxr_filt_atoms</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.pxr_filt_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>PXR only the atoms</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rnums">
+<em class="property">property </em><code class="sig-name descname">rnums</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rnums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the reactant tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rnums_atoms">
+<em class="property">property </em><code class="sig-name descname">rnums_atoms</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rnums_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the product tokens, without the SEP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rnums_filt">
+<em class="property">property </em><code class="sig-name descname">rnums_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rnums_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get atom numbers for just the reactant tokens, without the CLS</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rtokens">
+<em class="property">property </em><code class="sig-name descname">rtokens</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rtokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rtokens_filt">
+<em class="property">property </em><code class="sig-name descname">rtokens_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rtokens_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reactant tokens without special tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rxp">
+<em class="property">property </em><code class="sig-name descname">rxp</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rxp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rxp_filt">
+<em class="property">property </em><code class="sig-name descname">rxp_filt</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rxp_filt" title="Permalink to this definition">¶</a></dt>
+<dd><p>RXP without the special tokens</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.rxp_filt_atoms">
+<em class="property">property </em><code class="sig-name descname">rxp_filt_atoms</code><a class="headerlink" href="#rxnmapper.attention.AttentionScorer.rxp_filt_atoms" title="Permalink to this definition">¶</a></dt>
+<dd><p>RXP only the atoms</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.attention.AttentionScorer.token_ind">
+<code class="sig-name descname">token_ind</code><span class="sig-paren">(</span><em class="sig-param">atom_num</em><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#rxnmapper.attention.AttentionScorer.token_ind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get token index from an atom number</p>
+<p>Note that this is not a lossless mapping. -1 is mapped to the (length of the original tokens) - 1</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rxnmapper.core">
+<span id="rxnmapper-core-module"></span><h2>rxnmapper.core module<a class="headerlink" href="#module-rxnmapper.core" title="Permalink to this headline">¶</a></h2>
+<p>Core RXN Attention Mapper module.</p>
+<dl class="class">
+<dt id="rxnmapper.core.RXNMapper">
+<em class="property">class </em><code class="sig-prename descclassname">rxnmapper.core.</code><code class="sig-name descname">RXNMapper</code><span class="sig-paren">(</span><em class="sig-param">config: Dict = {}</em>, <em class="sig-param">logger: Optional[logging.Logger] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.core.RXNMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Mapping product and reactant atoms using attention weights</p>
+<dl class="method">
+<dt id="rxnmapper.core.RXNMapper.convert_batch_to_attns">
+<code class="sig-name descname">convert_batch_to_attns</code><span class="sig-paren">(</span><em class="sig-param">rxn_smiles_list: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.core.RXNMapper.convert_batch_to_attns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.core.RXNMapper.get_attention_guided_atom_maps">
+<code class="sig-name descname">get_attention_guided_atom_maps</code><span class="sig-paren">(</span><em class="sig-param">rxns: List[str], zero_set_p: bool = True, zero_set_r: bool = True, detailed_output: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.core.RXNMapper.get_attention_guided_atom_maps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rxnmapper.smiles_utils">
+<span id="rxnmapper-smiles-utils-module"></span><h2>rxnmapper.smiles_utils module<a class="headerlink" href="#module-rxnmapper.smiles_utils" title="Permalink to this headline">¶</a></h2>
+<p>Smiles uitls.</p>
+<dl class="exception">
+<dt id="rxnmapper.smiles_utils.NotCanonicalizableSmilesException">
+<em class="property">exception </em><code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">NotCanonicalizableSmilesException</code><a class="headerlink" href="#rxnmapper.smiles_utils.NotCanonicalizableSmilesException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.canonicalize_and_atom_map">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">canonicalize_and_atom_map</code><span class="sig-paren">(</span><em class="sig-param">smi</em>, <em class="sig-param">with_replacements=False</em>, <em class="sig-param">return_equivalent_atoms=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.canonicalize_and_atom_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove atom mapping, canonicalize and return mapping numbers in order of canonicalization.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.canonicalize_smi">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">canonicalize_smi</code><span class="sig-paren">(</span><em class="sig-param">smi</em>, <em class="sig-param">remove_atom_mapping=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.canonicalize_smi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.generate_atom_mapped_reaction_atoms">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">generate_atom_mapped_reaction_atoms</code><span class="sig-paren">(</span><em class="sig-param">rxn</em>, <em class="sig-param">product_atom_maps</em>, <em class="sig-param">expected_atom_maps=None</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.generate_atom_mapped_reaction_atoms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_adjacency_matrix">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_adjacency_matrix</code><span class="sig-paren">(</span><em class="sig-param">smiles</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_adjacency_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute adjacency matrix between atoms. Only works for single molecules atm and not for rxns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>{</strong><strong>[</strong><strong>type</strong><strong>]</strong><strong>} --</strong><strong> [</strong><strong>description</strong><strong>]</strong> (<em>smiles</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_atom_tokens_mask">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_atom_tokens_mask</code><span class="sig-paren">(</span><em class="sig-param">smiles</em>, <em class="sig-param">special_tokens: List[str] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_atom_tokens_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a mask for a smiles, where atom tokens
+are converted to 1 and other tokens to 0.</p>
+<p>e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smiles</strong> – Smiles string of reaction</p></li>
+<li><p><strong>special_tokens</strong> – Any special tokens to explicitly not call an atom. E.g. “[CLS]” or “[SEP]”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_atom_types">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_atom_types</code><span class="sig-paren">(</span><em class="sig-param">smiles</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_atom_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a list of the atom types in</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_atom_types_smiles">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_atom_types_smiles</code><span class="sig-paren">(</span><em class="sig-param">smiles</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_atom_types_smiles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_graph_distance_matrix">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_graph_distance_matrix</code><span class="sig-paren">(</span><em class="sig-param">smiles</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_graph_distance_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute graph distance matrix between atoms. Only works for single molecules atm and not for rxns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>{</strong><strong>[</strong><strong>type</strong><strong>]</strong><strong>} --</strong><strong> [</strong><strong>description</strong><strong>]</strong> (<em>smiles</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.get_mask_for_tokens">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">get_mask_for_tokens</code><span class="sig-paren">(</span><em class="sig-param">tokens</em>, <em class="sig-param">special_tokens: List[str] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.get_mask_for_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a mask for a tokenized smiles, where atom tokens
+are converted to 1 and other tokens to 0.</p>
+<p>e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smiles</strong> – Smiles string of reaction</p></li>
+<li><p><strong>special_tokens</strong> – Any special tokens to explicitly not call an atom. E.g. “[CLS]” or “[SEP]”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.is_atom">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">is_atom</code><span class="sig-paren">(</span><em class="sig-param">token: str</em>, <em class="sig-param">special_tokens: List[str] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.is_atom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether a token is an atom.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>token</strong> – Token fed into the transformer model</p></li>
+<li><p><strong>special_tokens</strong> – List of tokens to consider as non-atoms (often introduced by tokenizer)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if atom, False if not</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.is_mol_end">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">is_mol_end</code><span class="sig-paren">(</span><em class="sig-param">a: str</em>, <em class="sig-param">b: str</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.is_mol_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.number_tokens">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">number_tokens</code><span class="sig-paren">(</span><em class="sig-param">tokens: List[str], special_tokens=['[CLS]', '[SEP]']</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.number_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map list of tokens to a list of numbered atoms</p>
+<p>E.g., [‘[CLS]’, ‘C’, ‘.’, ‘C’, ‘C’, ‘C’, ‘C’, ‘C’, ‘C’,] =&gt; [-1, 0, -1, 1, 2, 3, 4, 5, 6]</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.process_reaction">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">process_reaction</code><span class="sig-paren">(</span><em class="sig-param">rxn</em>, <em class="sig-param">fragments=''</em>, <em class="sig-param">fragment_bond='~'</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.process_reaction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.process_reaction_with_product_maps_atoms">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">process_reaction_with_product_maps_atoms</code><span class="sig-paren">(</span><em class="sig-param">rxn</em>, <em class="sig-param">with_replacements=False</em>, <em class="sig-param">skip_if_not_in_precursors=False</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.process_reaction_with_product_maps_atoms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.split_into_mols">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">split_into_mols</code><span class="sig-paren">(</span><em class="sig-param">tokens: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.split_into_mols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a reaction smiles into molecules</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.tok_mask">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">tok_mask</code><span class="sig-paren">(</span><em class="sig-param">tokens</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.tok_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.tokenize">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">tokenize</code><span class="sig-paren">(</span><em class="sig-param">smiles</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.tokenize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenize a SMILES molecule or reaction</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.tokens_to_adjacency">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">tokens_to_adjacency</code><span class="sig-paren">(</span><em class="sig-param">tokens: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.tokens_to_adjacency" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.smiles_utils.tokens_to_smiles">
+<code class="sig-prename descclassname">rxnmapper.smiles_utils.</code><code class="sig-name descname">tokens_to_smiles</code><span class="sig-paren">(</span><em class="sig-param">tokens: List[str], special_tokens: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.smiles_utils.tokens_to_smiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine tokens into valid SMILES string, filtering out special tokens</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rxnmapper.tokenization_smiles">
+<span id="rxnmapper-tokenization-smiles-module"></span><h2>rxnmapper.tokenization_smiles module<a class="headerlink" href="#module-rxnmapper.tokenization_smiles" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="rxnmapper.tokenization_smiles.BasicSmilesTokenizer">
+<em class="property">class </em><code class="sig-prename descclassname">rxnmapper.tokenization_smiles.</code><code class="sig-name descname">BasicSmilesTokenizer</code><span class="sig-paren">(</span><em class="sig-param">regex_pattern='(\[[^\]]+]|Br?|Cl?|N|O|S|P|F|I|b|c|n|o|s|p|\(|\)|\.|=|#|-|\+|\\|\/|:|~|&#64;|\?|&gt;&gt;?|\*|\$|\%[0-9]{2}|[0-9])'</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.BasicSmilesTokenizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Run basic SMILES tokenization</p>
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.BasicSmilesTokenizer.tokenize">
+<code class="sig-name descname">tokenize</code><span class="sig-paren">(</span><em class="sig-param">text</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.BasicSmilesTokenizer.tokenize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic Tokenization of a SMILES.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer">
+<em class="property">class </em><code class="sig-prename descclassname">rxnmapper.tokenization_smiles.</code><code class="sig-name descname">SmilesTokenizer</code><span class="sig-paren">(</span><em class="sig-param">vocab_file</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">transformers.tokenization_bert.BertTokenizer</span></code></p>
+<p>Constructs a SmilesTokenizer.
+Mostly copied from <a class="reference external" href="https://github.com/huggingface/transformers">https://github.com/huggingface/transformers</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vocab_file</strong> – Path to a SMILES character per line vocabulary file</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.add_padding_tokens">
+<code class="sig-name descname">add_padding_tokens</code><span class="sig-paren">(</span><em class="sig-param">token_ids</em>, <em class="sig-param">length</em>, <em class="sig-param">right=True</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.add_padding_tokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds padding tokens to return a sequence of length max_length.
+By  default padding tokens are added to the right of the sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_ids_sequence_pair">
+<code class="sig-name descname">add_special_tokens_ids_sequence_pair</code><span class="sig-paren">(</span><em class="sig-param">token_ids_0</em>, <em class="sig-param">token_ids_1</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_ids_sequence_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds special tokens to a sequence pair for sequence classification tasks.
+A BERT sequence pair has the following format: [CLS] A [SEP] B [SEP]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_ids_single_sequence">
+<code class="sig-name descname">add_special_tokens_ids_single_sequence</code><span class="sig-paren">(</span><em class="sig-param">token_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_ids_single_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds special tokens to the a sequence for sequence classification tasks.
+A BERT sequence has the following format: [CLS] X [SEP]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_sequence_pair">
+<code class="sig-name descname">add_special_tokens_sequence_pair</code><span class="sig-paren">(</span><em class="sig-param">token_0</em>, <em class="sig-param">token_1</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_sequence_pair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds special tokens to a sequence pair for sequence classification tasks.
+A BERT sequence pair has the following format: [CLS] A [SEP] B [SEP]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_single_sequence">
+<code class="sig-name descname">add_special_tokens_single_sequence</code><span class="sig-paren">(</span><em class="sig-param">tokens</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.add_special_tokens_single_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds special tokens to the a sequence for sequence classification tasks.
+A BERT sequence has the following format: [CLS] X [SEP]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.convert_tokens_to_string">
+<code class="sig-name descname">convert_tokens_to_string</code><span class="sig-paren">(</span><em class="sig-param">tokens</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.convert_tokens_to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a sequence of tokens (string) in a single string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.save_vocabulary">
+<code class="sig-name descname">save_vocabulary</code><span class="sig-paren">(</span><em class="sig-param">vocab_path</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.save_vocabulary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the tokenizer vocabulary to a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.vocab_list">
+<em class="property">property </em><code class="sig-name descname">vocab_list</code><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.vocab_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="rxnmapper.tokenization_smiles.SmilesTokenizer.vocab_size">
+<em class="property">property </em><code class="sig-name descname">vocab_size</code><a class="headerlink" href="#rxnmapper.tokenization_smiles.SmilesTokenizer.vocab_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of the base vocabulary (without the added tokens)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="rxnmapper.tokenization_smiles.load_vocab">
+<code class="sig-prename descclassname">rxnmapper.tokenization_smiles.</code><code class="sig-name descname">load_vocab</code><span class="sig-paren">(</span><em class="sig-param">vocab_file</em><span class="sig-paren">)</span><a class="headerlink" href="#rxnmapper.tokenization_smiles.load_vocab" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a vocabulary file into a dictionary.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-rxnmapper">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-rxnmapper" title="Permalink to this headline">¶</a></h2>
+<p>rxnmapper initialization.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="rxnmapper" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

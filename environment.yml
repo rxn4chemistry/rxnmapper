@@ -1,0 +1,10 @@
+name: rxnmapper
+channels:
+  - rdkit
+  - anaconda
+  - default
+  - conda-forge
+dependencies:
+  - pip>=20.0.0
+  - python=3.6
+  - rdkit
