@@ -48,3 +48,7 @@ You can run the examples above with the test suite as well:
 
 To learn more see the [examples](./examples).
 
+## Data 
+
+Data can be found at: https://ibm.box.com/v/RXNMapperData
+
