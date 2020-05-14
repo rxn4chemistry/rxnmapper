@@ -9,8 +9,8 @@ else:
     long_description = '''Reaction atom-mapping from transfomers'''
 
 setup(
-    name='RXNMapper',
-    version='0.1.0',
+    name='rxnmapper',
+    version='0.1.1',
     author='RXNMapper team',
     author_email='phs@zurich.ibm.com, benjamin.hoover@ibm.com',
     py_modules=['rxnmapper'],
