@@ -3,6 +3,8 @@ Enable robust atom mapping on valid reaction SMILES. The atom-mapping informatio
 
 This software is accompanied by a [demo](http://rxnmapper.ai/demo.html) and a writeup, all accesible at http://rxnmapper.ai.
 
+[Documentation](https://rxn4chemistry.github.io/rxnmapper/).
+
 ## Installation
 For all installations, we recommend using `conda` to get the necessary `rdkit` dependency:
 

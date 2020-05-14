@@ -11,8 +11,6 @@ Welcome to RXNMapper's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   _modules/*   
-
 Indices and tables
 ==================
 
