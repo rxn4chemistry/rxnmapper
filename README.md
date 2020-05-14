@@ -1,4 +1,7 @@
 # Unsupervised attention-guided atom-mapping
+Enable robust atom mapping on valid reaction SMILES. The atom-mapping information was learned by an ALBERT model trained in an unsupervised fashion on a large dataset of chemical reactions.
+
+This software is accompanied by a [demo](http://rxnmapper.ai/demo.html) and a writeup, all accesible at http://rxnmapper.ai.
 
 ## Installation
 For all installations, we recommend using `conda` to get the necessary `rdkit` dependency:
