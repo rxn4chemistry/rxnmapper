@@ -1,26 +1,22 @@
 # Unsupervised attention-guided atom-mapping
 
-## Installation instructions
+## Installation
+For all installations, we recommend using `conda` to get the necessary `rdkit` dependency:
 
-### From Conda
-
-### From Pip
-
-Unfortunately, `rdkit` is not supported on pip, which makes this a slightly more involved process.
-
-### From github
-
+### From pip
 ```console
 conda create -n rxnmapper python=3.6 -y
 conda activate rxnmapper
 conda install -c rdkit rdkit
-pip install git+https://github.ibm.com/PHS/rxnmapper.git
+pip install rxnmapper
 ```
 
-### For development
-You can install the environment for local development using the following:
+### From github
+You can install the package and setup the environment directly from github using:
 
 ```console
+git clone https://github.com/rxn4chemistry/rxnmapper.git 
+cd rxnmapper
 conda env create -f environment.yml
 conda activate rxnmapper
 pip install -e .
