@@ -125,3 +125,4 @@ docs_source/_build/
 docs_source/_modules/
 
 .vscode
+_archive

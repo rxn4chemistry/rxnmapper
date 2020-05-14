@@ -1,6 +1,14 @@
 # Unsupervised attention-guided atom-mapping
 
-## Install
+## Installation instructions
+
+### From Conda
+
+### From Pip
+
+Unfortunately, `rdkit` is not supported on pip, which makes this a slightly more involved process.
+
+### From github
 
 ```console
 conda create -n rxnmapper python=3.6 -y
@@ -9,7 +17,7 @@ conda install -c rdkit rdkit
 pip install git+https://github.ibm.com/PHS/rxnmapper.git
 ```
 
-## For development
+### For development
 You can install the environment for local development using the following:
 
 ```console

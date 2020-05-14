@@ -1,1 +1,1 @@
-include rxnmapper/models/transformers/*
+include rxnmapper/models/transformers/albert_heads_8_uspto_all_1310k/*
