@@ -10,7 +10,7 @@ else:
 
 setup(
     name='rxnmapper',
-    version='0.1.2',
+    version='0.1.3',
     author='RXNMapper team',
     author_email='phs@zurich.ibm.com, benjamin.hoover@ibm.com',
     py_modules=['rxnmapper'],
