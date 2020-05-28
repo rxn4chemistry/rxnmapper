@@ -166,7 +166,7 @@ class RXNMapper:
         Args:
             rxns: List of reaction SMILES (no reactant/reagent split)
             zero_set_p: Mask mapped product atoms (default: True)
-            zero_set_r: Mask mapped reactant atoms (efault: True)
+            zero_set_r: Mask mapped reactant atoms (default: True)
             canonicalize_rxns: Canonicalize reactions (default: True)
             detailed_output: Get back more information (default: False)
             absolute_product_inds: Different atom indexing (default: False)
