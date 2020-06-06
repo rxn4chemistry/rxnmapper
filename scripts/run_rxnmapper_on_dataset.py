@@ -44,23 +44,12 @@ def main(
 
     rxn_mapper = RXNMapper()
 
-    results = []
-    rxns = []
+    results = rxn_mapper.get_attention_guided_atom_maps(
+        df['rxn'],
+        canonicalize_rxns=canonicalize,
+        detailed_output=detailed,
+        batch_size=batch_size)
 
-    for i, row in tqdm(df.iterrows(), total=len(df)):
-
-        rxns.append(row['rxn'])
-
-        if (i + 1) % batch_size == 0:
-            results += rxn_mapper.get_attention_guided_atom_maps(
-                rxns, canonicalize_rxns=canonicalize, detailed_output=detailed
-            )
-            rxns = []
-
-    if rxns:
-        results += rxn_mapper.get_attention_guided_atom_maps(
-            rxns, canonicalize_rxns=canonicalize
-        )
     results_df = pd.DataFrame(results)
 
     results_df.to_json(output_path)

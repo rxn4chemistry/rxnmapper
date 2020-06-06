@@ -160,6 +160,7 @@ class RXNMapper:
         absolute_product_inds: bool = False,
         force_layer: Optional[int] = None,
         force_head: Optional[int] = None,
+        batch_size: Optional[int] = None,
     ):
         """Generate atom-mapping for reactions.
 
@@ -172,6 +173,7 @@ class RXNMapper:
             absolute_product_inds: Different atom indexing (default: False)
             force_layer: Force specific layer (default: None)
             force_head: Force specific head (default: None)
+            batch_size: Process reactions in batch_size (default: None)
 
         Returns:
             Mapped reactions with confidence score (List):
@@ -187,6 +189,22 @@ class RXNMapper:
                 - tokens: Tokens that were inputted into the model
         """
         results = []
+
+
+        if batch_size is not None:
+        	for start_idx in range(0, len(rxns), batch_size):
+        		end_idx = min(start_idx + batch_size, len(rxns))
+        		results += self.get_attention_guided_atom_maps(
+        			rxns[start_idx:end_idx],
+        			zero_set_p,
+        			zero_set_r,
+        			canonicalize_rxns,
+        			detailed_output,
+        			absolute_product_inds,
+        			force_layer,
+        			force_head)
+        	return results
+
 
         if canonicalize_rxns:
             rxns = [process_reaction(rxn) for rxn in rxns]
