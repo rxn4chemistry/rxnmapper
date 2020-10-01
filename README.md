@@ -12,7 +12,7 @@ For all installations, we recommend using `conda` to get the necessary `rdkit` d
 ```console
 conda create -n rxnmapper python=3.6 -y
 conda activate rxnmapper
-conda install -c rdkit rdkit
+conda install -c rdkit rdkit=2020.03.3.0
 pip install rxnmapper
 ```
 
