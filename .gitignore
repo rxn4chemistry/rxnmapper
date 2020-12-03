@@ -1,3 +1,4 @@
+
 # secrets detector
 .secrets.baseline
 
@@ -123,6 +124,7 @@ examples/data.xlsx
 # custom folders
 docs_source/_build/
 docs_source/_modules/
+notebooks/ 
 
 .vscode
 _archive

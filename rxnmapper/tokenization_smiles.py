@@ -41,9 +41,6 @@ class SmilesTokenizer(BertTokenizer):
             **vocab_file**: Path to a SMILES character per line vocabulary file
         """
         super().__init__(vocab_file, **kwargs)
-        # take into account special tokens in max length
-        self.max_len_single_sentence = self.max_len - 2
-        self.max_len_sentences_pair = self.max_len - 3
 
         if not os.path.isfile(vocab_file):
             raise ValueError(
@@ -60,7 +57,7 @@ class SmilesTokenizer(BertTokenizer):
             [(ids, tok) for tok, ids in self.vocab.items()]
         )
         self.basic_tokenizer = BasicSmilesTokenizer()
-        self.init_kwargs["max_len"] = self.max_len
+        self.init_kwargs["model_max_length"] = self.model_max_length
 
     @property
     def vocab_size(self):
