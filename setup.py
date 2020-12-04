@@ -10,7 +10,7 @@ else:
 
 setup(
     name='rxnmapper',
-    version='0.1.3',
+    version='0.1.4',
     author='RXNMapper team',
     author_email='phs@zurich.ibm.com, benjamin.hoover@ibm.com',
     py_modules=['rxnmapper'],
@@ -19,7 +19,7 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT',
     install_requires=[
-        'transformers>=2.5.0', 'torch>=1.3.0', 'scipy==1.4.1'
+        'transformers==4.0.0', 'torch==1.5.0', 'scipy==1.4.1'
     ],
     packages=find_packages(),
     package_data={
