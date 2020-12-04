@@ -114,13 +114,11 @@ class RXNMapper:
 
         encoded_ids = self.tokenizer.batch_encode_plus(
             rxn_smiles_list,
-            pad_to_max_length=True,
+            padding=True,
             return_tensors="pt",
-            return_special_tokens_masks=True,
         )
-        parsed_input = {
-            k: encoded_ids[k].to(self.device)
-            for k in ["input_ids", "token_type_ids", "attention_mask"]
+        parsed_input = { 
+            k: v.to(self.device) for k, v in encoded_ids.items()
         }
         with torch.no_grad():
             output = self.model(**parsed_input)
