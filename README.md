@@ -1,9 +1,9 @@
-# Unsupervised attention-guided atom-mapping
+# Extraction of organic chemistry grammar from unsupervised learning of chemical reactions
 Enable robust atom mapping on valid reaction SMILES. The atom-mapping information was learned by an ALBERT model trained in an unsupervised fashion on a large dataset of chemical reactions.
 
-- [PrePrint](http://dx.doi.org/10.26434/chemrxiv.12298559)
-- [Demo](http://rxnmapper.ai/demo.html)
-- [Documentation](https://rxn4chemistry.github.io/rxnmapper/)
+- [Extraction of organic chemistry grammar from unsupervised learning of chemical reactions](https://advances.sciencemag.org/content/7/15/eabe4166): peer-reviewed Science Advances publication (open access).
+- [Demo](http://rxnmapper.ai/demo.html): give RXNMapper a try! 
+- [Unsupervised attention-guided atom-mapping preprint](http://dx.doi.org/10.26434/chemrxiv.12298559): presented at the ML Interpretability for Scientific Discovery ICML workshop, 2020.
 
 ## Installation
 For all installations, we recommend using `conda` to get the necessary `rdkit` dependency:
@@ -66,12 +66,14 @@ Data can be found at: https://ibm.box.com/v/RXNMapperData
 ## Citation
 
 ```
-@article{Schwaller2020Unsupervised,
-author = "Philippe Schwaller and Benjamin Hoover and Jean-Louis Reymond and Hendrik Strobelt and Teodoro Laino",
-title = "{Unsupervised Attention-Guided Atom-Mapping}",
-year = "2020",
-month = "5",
-url = "https://chemrxiv.org/articles/Unsupervised_Attention-Guided_Atom-Mapping/12298559",
-doi = "10.26434/chemrxiv.12298559.v1"
+@article{schwaller2021extraction,
+  title={Extraction of organic chemistry grammar from unsupervised learning of chemical reactions},
+  author={Schwaller, Philippe and Hoover, Benjamin and Reymond, Jean-Louis and Strobelt, Hendrik and Laino, Teodoro},
+  journal={Science Advances},
+  volume={7},
+  number={15},
+  pages={eabe4166},
+  year={2021},
+  publisher={American Association for the Advancement of Science}
 }
 ```
