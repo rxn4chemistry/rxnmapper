@@ -36,18 +36,11 @@ def get_atom_types(smiles: str):
     if ">>" in smiles:
         precursors, products = smiles.split(">>")
 
-        precursors_mol = Chem.MolFromSmiles(precursors)
-        products_mol = Chem.MolFromSmiles(products)
-
-        atom_types = [
-            atom.GetAtomicNum() for atom in precursors_mol.GetAtoms()
-        ]
-        atom_types += [atom.GetAtomicNum() for atom in products_mol.GetAtoms()]
+        atom_types = get_atom_types_smiles(precursors)
+        atom_types += get_atom_types_smiles(products)
 
     else:
-        smiles_mol = Chem.MolFromSmiles(smiles)
-
-        atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]
+        atom_types = get_atom_types_smiles(smiles)
 
     token_types = []
     atom_counter = 0
@@ -63,7 +56,7 @@ def get_atom_types(smiles: str):
 
 def get_atom_types_smiles(smiles: str) -> List[int]:
     """Convert each atom in a SMILES into a list of their atomic numbers
-    
+
     Args:
         smiles: SMILES representation of molecule
 
@@ -78,7 +71,7 @@ def get_atom_types_smiles(smiles: str) -> List[int]:
 
 
 def is_atom(token: str, special_tokens: List[str] = BAD_TOKS) -> bool:
-    """Determine whether a token is an atom. 
+    """Determine whether a token is an atom.
 
     Args:
         token: Token fed into the transformer model
@@ -128,7 +121,7 @@ def get_graph_distance_matrix(smiles: str):
     Args:
         smiles {[type]} -- [description]
 
-    Returns: 
+    Returns:
         Numpy array representing the graphwise distance between each atom and every other atom in the molecular SMILES
     """
     mol = Chem.MolFromSmiles(smiles)
@@ -153,7 +146,7 @@ def get_adjacency_matrix(smiles: str):
 
 def is_mol_end(a: str, b: str) -> bool:
     """Determine if `a` and `b` are both tokens within a molecule (Used by the `group_with` function).
-    
+
     Returns False whenever either `a` or `b` is a molecule delimeter (`.` or `>>`)"""
     no_dot = (a != ".") and (b != ".")
     no_arrow = (a != ">>") and (b != ">>")
@@ -166,7 +159,7 @@ def group_with(predicate, xs: List[Any]):
 all satisfied pairwise comparison according to the provided function.
 Only adjacent elements are passed to the comparison function
 
-    Original implementation here: https://github.com/slavaGanzin/ramda.py/blob/master/ramda/group_with.py 
+    Original implementation here: https://github.com/slavaGanzin/ramda.py/blob/master/ramda/group_with.py
 
     Args:
         predicate ( f(a,b) => bool): A function that takes two subsequent inputs and returns True or Fale
@@ -215,7 +208,7 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
 
     Args:
         tokens: Tokenized SMILES representation
-        
+
     Returns:
         Numpy Array, where non-zero entries in row `i` indicate the tokens that are atom-adjacent to token `i`
     """
@@ -245,9 +238,9 @@ def get_mask_for_tokens(tokens: List[str],
                         special_tokens: List[str] = []) -> List[int]:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
-    
+
     e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]
-    
+
     Args:
         smiles: Smiles string of reaction
         special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
@@ -266,9 +259,9 @@ def tok_mask(
 ) -> np.array:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
-    
+
     e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]
-    
+
     Args:
         smiles: Smiles string of reaction
         special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
@@ -283,9 +276,9 @@ def tok_mask(
 def get_atom_tokens_mask(smiles: str, special_tokens: List[str] = []):
     """Return a mask for a smiles, where atom tokens
     are converted to 1 and other tokens to 0.
-    
+
     e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]
-    
+
     Args:
         smiles: Smiles string of reaction
         special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
@@ -300,7 +293,7 @@ def get_atom_tokens_mask(smiles: str, special_tokens: List[str] = []):
 def canonicalize_and_atom_map(
     smi: str, return_equivalent_atoms=False
 ):
-    """ Remove atom mapping, canonicalize and return mapping numbers in order of canonicalization. 
+    """ Remove atom mapping, canonicalize and return mapping numbers in order of canonicalization.
 
     Args:
         smi: reaction SMILES str
@@ -341,9 +334,9 @@ def generate_atom_mapped_reaction_atoms(
 ):
     """
     Generate atom-mapped reaction from unmapped reaction and
-    product-2-reactant atoms mapping vector. 
+    product-2-reactant atoms mapping vector.
     Args:
-        rxn: unmapped reaction 
+        rxn: unmapped reaction
         product_atom_maps: product to reactant atom maps
         expected_atom_maps: (optional) if given return the differences
 
@@ -438,7 +431,7 @@ def process_reaction(
         fragments: (optional) fragments information
         fragment_bond:
 
-    Returns: joined_precursors>>joined_products reaction SMILES 
+    Returns: joined_precursors>>joined_products reaction SMILES
     """
     reactants, reagents, products = rxn.split(">")
     try:
@@ -492,7 +485,7 @@ def process_reaction_with_product_maps_atoms(
         rxn: Reaction SMILES
         skip_if_not_in_precursors: accept unmapped atoms in the product (default: False)
 
-    Returns: joined_precursors>>joined_products reaction SMILES 
+    Returns: joined_precursors>>joined_products reaction SMILES
     """
     reactants, reagents, products = rxn.split(">")
     try:
