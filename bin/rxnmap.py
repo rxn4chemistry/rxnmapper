@@ -1,15 +1,49 @@
 #!/usr/bin/env python3
 
+import argparse
+import sys
+import time
+
 from rxnmapper import RXNMapper
 
 rxn_mapper = RXNMapper()
-rxns = ['CC(C)S.CN(C)C=O.Fc1cccnc1F.O=C([O-])[O-].[K+].[K+]>>CC(C)Sc1ncccc1F', 'C1COCCO1.CC(C)(C)OC(=O)CONC(=O)NCc1cccc2ccccc12.Cl>>O=C(O)CONC(=O)NCc1cccc2ccccc12']
-results = rxn_mapper.get_attention_guided_atom_maps(rxns)
 
-for r in results:
-    print(r)
+def get_confidence(mapping):
+    return mapping['confidence']
 
-# [{'mapped_rxn': 'CN(C)C=O.F[c:5]1[n:6][cH:7][cH:8][cH:9][c:10]1[F:11].O=C([O-])[O-].[CH3:1][CH:2]([CH3:3])[SH:4].[K+].[K+]>>[CH3:1][CH:2]([CH3:3])[S:4][c:5]1[n:6][cH:7][cH:8][cH:9][c:10]1[F:11]',
-#   'confidence': 0.9565619900376546},
-#  {'mapped_rxn': 'C1COCCO1.CC(C)(C)[O:3][C:2](=[O:1])[CH2:4][O:5][NH:6][C:7](=[O:8])[NH:9][CH2:10][c:11]1[cH:12][cH:13][cH:14][c:15]2[cH:16][cH:17][cH:18][cH:19][c:20]12.Cl>>[O:1]=[C:2]([OH:3])[CH2:4][O:5][NH:6][C:7](=[O:8])[NH:9][CH2:10][c:11]1[cH:12][cH:13][cH:14][c:15]2[cH:16][cH:17][cH:18][cH:19][c:20]12',
-#   'confidence': 0.9704424331552834}]
+def get_mapping(mapping):
+    return mapping['mapped_rxn']
+
+if __name__ == '__main__':
+    before = time.time()
+    # CLI options parsing
+    parser = argparse.ArgumentParser(description = "Atom-atom mapping of reaction SMILES")
+    parser.add_argument("-i", metavar = "input.rsmi", dest = "input_fn",
+                        help = "reactions input file")
+    parser.add_argument("-o", metavar = "output.rsmi", dest = "output_fn",
+                        help = "mapped reactions output file")
+    # parse CLI
+    if len(sys.argv) == 1:
+        # user has no clue of what to do -> usage
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+    args = parser.parse_args()
+    input_fn = args.input_fn
+    output = open(args.output_fn, 'w')
+    count = 0
+    # read reactions ---------------------------------------------------------
+    for raw_line in open(input_fn, 'r').readlines():
+        line = raw_line.strip()
+        tokens = line.split()
+        rsmi = tokens[0]
+        # print("line: %s" % line)
+        # print("rsmi: %s" % rsmi)
+        mapped = rxn_mapper.get_attention_guided_atom_maps([rsmi])
+        mapping = get_mapping(mapped[0])
+        print('%s' % mapping, file=output)
+        count += 1
+    after = time.time()
+    dt = after - before
+    print("read %d reactions at %.2f Hz" %
+          (count, count / dt), file=sys.stderr)
+    output.close()
