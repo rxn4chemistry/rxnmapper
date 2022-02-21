@@ -44,7 +44,7 @@ if __name__ == '__main__':
             mapping = get_mapping(mapped[0])
             print('%s' % mapping, file=output)
             ok += 1
-        except Error:
+        except:
             print('%s' % line, file=sys.stderr)
             ko += 1
     after = time.time()
