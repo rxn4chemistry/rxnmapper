@@ -30,7 +30,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     input_fn = args.input_fn
     output = open(args.output_fn, 'w')
-    count = 0
+    ok = 0
+    ko = 0
     # read reactions ---------------------------------------------------------
     for raw_line in open(input_fn, 'r').readlines():
         line = raw_line.strip()
@@ -38,12 +39,17 @@ if __name__ == '__main__':
         rsmi = tokens[0]
         # print("line: %s" % line)
         # print("rsmi: %s" % rsmi)
-        mapped = rxn_mapper.get_attention_guided_atom_maps([rsmi])
-        mapping = get_mapping(mapped[0])
-        print('%s' % mapping, file=output)
-        count += 1
+        try:
+            mapped = rxn_mapper.get_attention_guided_atom_maps([rsmi])
+            mapping = get_mapping(mapped[0])
+            print('%s' % mapping, file=output)
+            ok += 1
+        except Error:
+            print('%s' % line, file=sys.stderr)
+            ko += 1
     after = time.time()
     dt = after - before
-    print("read %d reactions at %.2f Hz" %
-          (count, count / dt), file=sys.stderr)
+    total = ok + ko
+    print("(OK,KO,total)=(%d,%d,%d) reactions at %.2f Hz" %
+          (ok, ko, total, total / dt), file=sys.stderr)
     output.close()
