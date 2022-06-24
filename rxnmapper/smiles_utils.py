@@ -14,7 +14,7 @@ from functools import partial
 from rdkit import rdBase
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn.chemutils.exceptions import InvalidSmiles
-from rxn.chemutils.reaction_equation import ReactionEquation, sort_compounds
+from rxn.chemutils.reaction_equation import ReactionEquation, sort_compounds, apply_to_compounds, merge_reactants_and_agents
 from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
 from rxn.chemutils.utils import remove_atom_mapping
 
@@ -432,9 +432,7 @@ def canonicalize_smi(smi: str, remove_mapping=False) -> str:
         raise NotCanonicalizableSmilesException("Molecule not canonicalizable") from e
 
 
-def process_reaction(
-    rxn: str, fragments: str = "", fragment_bond: str = "~"
-) -> str:
+def process_reaction(rxn: str, fragment_bond: str = "~") -> str:
     """
     Remove atom-mapping, move reagents to reactants and canonicalize reaction.
     If fragment group information is given, keep the groups together using
@@ -447,44 +445,17 @@ def process_reaction(
 
     Returns: joined_precursors>>joined_products reaction SMILES
     """
-    reactants, reagents, products = parse_any_reaction_smiles(rxn)
+    reaction = parse_any_reaction_smiles(rxn)
+    reaction = merge_reactants_and_agents(reaction)
+
     try:
-        precursors = [canonicalize_smi(r, True) for r in reactants]
-        if len(reagents) > 0:
-            precursors += [
-                canonicalize_smi(r, True) for r in reagents
-            ]
-        products = [canonicalize_smi(p, True) for p in products]
+        canonicalize_and_remove_atom_map = partial(canonicalize_smi, remove_mapping=True)
+        reaction = apply_to_compounds(reaction, canonicalize_and_remove_atom_map)
     except NotCanonicalizableSmilesException:
         return ""
-    if len(fragments) > 1 and fragments[1] == "f":
-        number_of_precursors = len(precursors)
-        groups = fragments[3:-1].split(",")
-        new_precursors = precursors.copy()
-        new_products = products.copy()
-        for group in groups:
-            grouped_smi = []
-            if group.startswith("^"):
-                return ""
-            for member in group.split("."):
-                member = int(member)
-                if member >= number_of_precursors:
-                    grouped_smi.append(products[member - number_of_precursors])
-                    new_products.remove(
-                        products[member - number_of_precursors]
-                    )
-                else:
-                    grouped_smi.append(precursors[member])
-                    new_precursors.remove(precursors[member])
-            if member >= number_of_precursors:
-                new_products.append(fragment_bond.join(sorted(grouped_smi)))
-            else:
-                new_precursors.append(fragment_bond.join(sorted(grouped_smi)))
-        precursors = new_precursors
-        products = new_products
-    req = ReactionEquation(precursors, [], products)
-    req = sort_compounds(req)
-    return req.to_string(fragment_bond=fragment_bond)
+
+    reaction = sort_compounds(reaction)
+    return reaction.to_string(fragment_bond=fragment_bond)
 
 
 def process_reaction_with_product_maps_atoms(
