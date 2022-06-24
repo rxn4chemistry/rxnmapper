@@ -351,7 +351,7 @@ def generate_atom_mapped_reaction_atoms(
 
     precs, reags, prods = parse_any_reaction_smiles(rxn)
     precursors_mols = [Chem.MolFromSmiles(pr) for pr in precs]
-    products_mol = Chem.MolFromSmiles(prods)
+    products_mols = [Chem.MolFromSmiles(prod) for prod in prods]
 
     precursors_atom_maps = []
 
@@ -387,16 +387,18 @@ def generate_atom_mapped_reaction_atoms(
                         expected_atom_maps.index(i) + 1
                     ):
                         differing_maps.append(corresponding_product_atom_map)
-        atom_mapped_precursors_list.append(Chem.MolToSmiles(precursor_mol).replace('.', '~'))
+        atom_mapped_precursors_list.append(Chem.MolToSmiles(precursor_mol))
 
-    atom_mapped_precursors = '.'.join(atom_mapped_precursors_list)
+    i = -1
+    atom_mapped_products_list = []
+    for products_mol in products_mols:
+        for atom in products_mol.GetAtoms():
+            i += 1
+            atom_map = product_mapping_dict.get(i, i + 1)
+            atom.SetProp("molAtomMapNumber", str(atom_map))
+        atom_mapped_products_list.append(Chem.MolToSmiles(products_mol))
 
-    for i, atom in enumerate(products_mol.GetAtoms()):
-        atom_map = product_mapping_dict.get(i, i + 1)
-        atom.SetProp("molAtomMapNumber", str(atom_map))
-    atom_mapped_products = Chem.MolToSmiles(products_mol)
-
-    atom_mapped_rxn = atom_mapped_precursors + ">>" + atom_mapped_products
+    atom_mapped_rxn = ReactionEquation(atom_mapped_precursors_list, [], atom_mapped_products_list).to_string(fragment_bond='~')
 
     if expected_atom_maps is not None:
         return atom_mapped_rxn, differing_maps
