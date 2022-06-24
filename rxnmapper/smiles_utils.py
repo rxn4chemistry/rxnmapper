@@ -12,8 +12,11 @@ from rdkit.Chem import AllChem
 from functools import partial
 
 from rdkit import rdBase
+from rxn.chemutils.conversion import canonicalize_smiles
+from rxn.chemutils.exceptions import InvalidSmiles
 from rxn.chemutils.reaction_equation import ReactionEquation, sort_compounds
 from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
+from rxn.chemutils.utils import remove_atom_mapping
 
 LOGGER = logging.getLogger("attnmapper:smiles_utils")
 
@@ -410,24 +413,23 @@ class NotCanonicalizableSmilesException(ValueError):
     pass
 
 
-def canonicalize_smi(smi: str, remove_atom_mapping=False) -> str:
+def canonicalize_smi(smi: str, remove_mapping=False) -> str:
     """ Convert a SMILES string into its canonicalized form
 
     Args:
         smi: Reaction SMILES
-        remove_atom_mapping: If True, remove atom mapping information from the canonicalized SMILES output
+        remove_mapping: If True, remove atom mapping information from the canonicalized SMILES output
 
     Returns:
         SMILES reaction, canonicalized, as a string
     """
-    mol = Chem.MolFromSmiles(smi)
-    if not mol:
-        raise NotCanonicalizableSmilesException("Molecule not canonicalizable")
-    if remove_atom_mapping:
-        for atom in mol.GetAtoms():
-            if atom.HasProp("molAtomMapNumber"):
-                atom.ClearProp("molAtomMapNumber")
-    return Chem.MolToSmiles(mol)
+    if remove_mapping:
+        smi = remove_atom_mapping(smi)
+
+    try:
+        return canonicalize_smiles(smi)
+    except InvalidSmiles as e:
+        raise NotCanonicalizableSmilesException("Molecule not canonicalizable") from e
 
 
 def process_reaction(
