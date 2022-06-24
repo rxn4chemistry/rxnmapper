@@ -77,3 +77,10 @@ Data can be found at: https://ibm.box.com/v/RXNMapperData
   publisher={American Association for the Advancement of Science}
 }
 ```
+
+# Changes (to delete)
+
+See the tests for the differences.
+
+Changes:
+* Able to handle fragment bonds correctly. F.i., `[H-]~[Na+]` does not cause a failure anymore.
