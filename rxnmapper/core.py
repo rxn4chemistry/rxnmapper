@@ -214,7 +214,7 @@ class RXNMapper:
             result = {
                 "mapped_rxn":
                     generate_atom_mapped_reaction_atoms(
-                        rxn, output["pxr_mapping_vector"]
+                        rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
                     ),
                 "confidence":
                     np.prod(output["confidences"]),

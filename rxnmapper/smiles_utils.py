@@ -338,7 +338,7 @@ def canonicalize_and_atom_map(
 
 
 def generate_atom_mapped_reaction_atoms(
-    rxn: str, product_atom_maps, expected_atom_maps=None
+    rxn: str, product_atom_maps, expected_atom_maps=None, canonical:bool = False
 ):
     """
     Generate atom-mapped reaction from unmapped reaction and
@@ -390,7 +390,7 @@ def generate_atom_mapped_reaction_atoms(
                         expected_atom_maps.index(i) + 1
                     ):
                         differing_maps.append(corresponding_product_atom_map)
-        atom_mapped_precursors_list.append(Chem.MolToSmiles(precursor_mol))
+        atom_mapped_precursors_list.append(Chem.MolToSmiles(precursor_mol, canonical=canonical))
 
     i = -1
     atom_mapped_products_list = []
@@ -399,7 +399,7 @@ def generate_atom_mapped_reaction_atoms(
             i += 1
             atom_map = product_mapping_dict.get(i, i + 1)
             atom.SetProp("molAtomMapNumber", str(atom_map))
-        atom_mapped_products_list.append(Chem.MolToSmiles(products_mol))
+        atom_mapped_products_list.append(Chem.MolToSmiles(products_mol, canonical=canonical))
 
     atom_mapped_rxn = ReactionEquation(atom_mapped_precursors_list, [], atom_mapped_products_list).to_string(fragment_bond='~')
 
