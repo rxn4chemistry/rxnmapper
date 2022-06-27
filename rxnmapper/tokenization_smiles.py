@@ -6,11 +6,9 @@ import collections
 import logging
 import os
 import re
-import numpy as np
-
-from typing import List
 
 from transformers import BertTokenizer
+
 from .smiles_utils import SMI_REGEX_PATTERN
 
 logger = logging.getLogger(__name__)
@@ -43,15 +41,10 @@ class SmilesTokenizer(BertTokenizer):
         super().__init__(vocab_file, **kwargs)
 
         if not os.path.isfile(vocab_file):
-            raise ValueError(
-                "Can't find a vocab file at path '{}'.".format(vocab_file)
-            )
+            raise ValueError("Can't find a vocab file at path '{}'.".format(vocab_file))
         self.vocab = load_vocab(vocab_file)
         self.highest_unused_index = max(
-            [
-                i for i, v in enumerate(self.vocab.keys())
-                if v.startswith("[unused")
-            ]
+            [i for i, v in enumerate(self.vocab.keys()) if v.startswith("[unused")]
         )
         self.ids_to_tokens = collections.OrderedDict(
             [(ids, tok) for tok, ids in self.vocab.items()]
@@ -72,7 +65,7 @@ class SmilesTokenizer(BertTokenizer):
         return split_tokens
 
     def _convert_token_to_id(self, token):
-        """ Converts a token (str/unicode) in an id using the vocab. """
+        """Converts a token (str/unicode) in an id using the vocab."""
         return self.vocab.get(token, self.vocab.get(self.unk_token))
 
     def _convert_id_to_token(self, index):
@@ -80,7 +73,7 @@ class SmilesTokenizer(BertTokenizer):
         return self.ids_to_tokens.get(index, self.unk_token)
 
     def convert_tokens_to_string(self, tokens):
-        """ Converts a sequence of tokens (string) in a single string. """
+        """Converts a sequence of tokens (string) in a single string."""
         out_string = " ".join(tokens).replace(" ##", "").strip()
         return out_string
 
@@ -119,7 +112,7 @@ class SmilesTokenizer(BertTokenizer):
     def add_padding_tokens(self, token_ids, length, right=True):
         """
         Adds padding tokens to return a sequence of length max_length.
-        By  default padding tokens are added to the right of the sequence. 
+        By  default padding tokens are added to the right of the sequence.
         """
         padding = [self.pad_token_id] * (length - len(token_ids))
         if right:
@@ -132,26 +125,25 @@ class SmilesTokenizer(BertTokenizer):
         index = 0
         vocab_file = vocab_path
         with open(vocab_file, "w", encoding="utf-8") as writer:
-            for token, token_index in sorted(
-                self.vocab.items(), key=lambda kv: kv[1]
-            ):
+            for token, token_index in sorted(self.vocab.items(), key=lambda kv: kv[1]):
                 if index != token_index:
                     logger.warning(
                         "Saving vocabulary to {}: vocabulary indices are not consecutive."
-                        " Please check that the vocabulary is not corrupted!".
-                        format(vocab_file)
+                        " Please check that the vocabulary is not corrupted!".format(
+                            vocab_file
+                        )
                     )
                     index = token_index
-                writer.write(token + u"\n")
+                writer.write(token + "\n")
                 index += 1
-        return (vocab_file, )
+        return (vocab_file,)
 
 
 class BasicSmilesTokenizer(object):
     """Run basic SMILES tokenization"""
 
     def __init__(self, regex_pattern=SMI_REGEX_PATTERN):
-        """ Constructs a BasicSMILESTokenizer.
+        """Constructs a BasicSMILESTokenizer.
 
         Args:
             **regex**: SMILES token regex
@@ -160,8 +152,7 @@ class BasicSmilesTokenizer(object):
         self.regex = re.compile(self.regex_pattern)
 
     def tokenize(self, text):
-        """ Basic Tokenization of a SMILES.
-        """
+        """Basic Tokenization of a SMILES."""
         tokens = [token for token in self.regex.findall(text)]
         return tokens
 

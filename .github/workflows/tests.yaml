@@ -1,0 +1,26 @@
+name: "Running tests: style, pytest"
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: Style, pytest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: pip install -e .
+    - name: Install test dependencies
+      run: pip install -r dev_requirements.txt
+    - name: Check black
+      run: python -m black --check --diff --color .
+    - name: Check isort
+      run: python -m isort --check --diff .
+    - name: Check flake8
+      run: python -m flake8 .
+    - name: Run pytests
+      run: python -m pytest
