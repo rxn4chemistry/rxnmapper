@@ -6,7 +6,13 @@ import pkg_resources
 import torch
 import numpy as np
 
-from typing import Optional, List, Dict, Tuple, Union
+from typing import Optional, List, Dict, Tuple, Union, Iterable, Iterator, Any
+
+from rxn.chemutils.reaction_equation import ReactionEquation
+from rxn.chemutils.reaction_smiles import (
+    determine_format, parse_any_reaction_smiles,
+    to_reaction_smiles, ReactionFormat
+)
 from transformers import PreTrainedModel, AlbertModel, BertModel, RobertaModel
 from .tokenization_smiles import SmilesTokenizer
 from .attention import AttentionScorer
@@ -184,10 +190,50 @@ class RXNMapper:
                 - tokensxtokens_attns: Full attentions for all tokens
                 - tokens: Tokens that were inputted into the model
         """
+        reaction_formats = (determine_format(rxn) for rxn in rxns)
+        reactions = [parse_any_reaction_smiles(rxn) for rxn in rxns]
+
+        raw_results = self.get_attention_guided_atom_maps_for_reactions(
+            reactions=reactions,
+            zero_set_p=zero_set_p,
+            zero_set_r=zero_set_r,
+            canonicalize_rxns=canonicalize_rxns,
+            detailed_output=detailed_output,
+            absolute_product_inds=absolute_product_inds,
+            force_layer=force_layer,
+            force_head=force_head,
+        )
+
         results = []
+        for (reaction, result), reaction_format in zip(raw_results, reaction_formats):
+            mapped_rxn = to_reaction_smiles(reaction, reaction_format=reaction_format)
+            result["mapped_rxn"] = mapped_rxn
+            results.append(result)
+        return results
+
+    def get_attention_guided_atom_maps_for_reactions(
+            self,
+        reactions: List[ReactionEquation],
+        zero_set_p: bool = True,
+        zero_set_r: bool = True,
+        canonicalize_rxns: bool = True,
+        detailed_output: bool = False,
+        absolute_product_inds: bool = False,
+        force_layer: Optional[int] = None,
+        force_head: Optional[int] = None,
+    ) -> Iterator[Tuple[ReactionEquation, Dict[str, Any]]]:
+        """Generate atom-mapping for ReactionEquation instances.
+
+        See documentation of get_attention_guided_atom_maps() for details on the
+        arguments and return value.
+        """
 
         if canonicalize_rxns:
-            rxns = [process_reaction(rxn) for rxn in rxns]
+            reactions = [process_reaction(reaction) for reaction in reactions]
+
+        # The transformer has been trained on the format containing tildes.
+        # This means that we must convert to that format for use with the model.
+        rxns = [to_reaction_smiles(reaction, reaction_format=ReactionFormat.STANDARD_WITH_TILDE) for reaction in reactions]
 
         attns = self.convert_batch_to_attns(
             rxns, force_layer=force_layer, force_head=force_head
@@ -211,11 +257,10 @@ class RXNMapper:
                 absolute_product_inds=absolute_product_inds
             )
 
+            mapped_reaction = generate_atom_mapped_reaction_atoms(
+                rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
+            )
             result = {
-                "mapped_rxn":
-                    generate_atom_mapped_reaction_atoms(
-                        rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
-                    ),
                 "confidence":
                     np.prod(output["confidences"]),
             }
@@ -227,5 +272,4 @@ class RXNMapper:
                 result["tokensxtokens_attns"] = tokensxtokens_attn
                 result["tokens"] = just_tokens
 
-            results.append(result)
-        return results
+            yield mapped_reaction, result

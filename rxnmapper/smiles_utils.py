@@ -339,12 +339,12 @@ def canonicalize_and_atom_map(
 
 def generate_atom_mapped_reaction_atoms(
     rxn: str, product_atom_maps, expected_atom_maps=None, canonical:bool = False
-):
+) -> ReactionEquation:
     """
     Generate atom-mapped reaction from unmapped reaction and
     product-2-reactant atoms mapping vector.
     Args:
-        rxn: unmapped reaction
+        rxn: unmapped reaction, in the format that the transformer model relies on.
         product_atom_maps: product to reactant atom maps
         expected_atom_maps: (optional) if given return the differences
 
@@ -360,9 +360,7 @@ def generate_atom_mapped_reaction_atoms(
 
     differing_maps = []
 
-    product_mapping_dict = {
-
-    }
+    product_mapping_dict = {}
 
     i = -1
     atom_mapped_precursors_list = []
@@ -401,7 +399,7 @@ def generate_atom_mapped_reaction_atoms(
             atom.SetProp("molAtomMapNumber", str(atom_map))
         atom_mapped_products_list.append(Chem.MolToSmiles(products_mol, canonical=canonical))
 
-    atom_mapped_rxn = ReactionEquation(atom_mapped_precursors_list, [], atom_mapped_products_list).to_string(fragment_bond='~')
+    atom_mapped_rxn = ReactionEquation(atom_mapped_precursors_list, [], atom_mapped_products_list)
 
     if expected_atom_maps is not None:
         return atom_mapped_rxn, differing_maps
@@ -432,30 +430,26 @@ def canonicalize_smi(smi: str, remove_mapping=False) -> str:
         raise NotCanonicalizableSmilesException("Molecule not canonicalizable") from e
 
 
-def process_reaction(rxn: str, fragment_bond: str = "~") -> str:
+def process_reaction(reaction: ReactionEquation) -> ReactionEquation:
     """
     Remove atom-mapping, move reagents to reactants and canonicalize reaction.
-    If fragment group information is given, keep the groups together using
-    the character defined with fragment_bond.
 
     Args:
-        rxn: Reaction SMILES
-        fragments: (optional) fragments information
-        fragment_bond:
+        reaction: Reaction equation to process.
 
-    Returns: joined_precursors>>joined_products reaction SMILES
+    Returns:
+        Processed reaction.
     """
-    reaction = parse_any_reaction_smiles(rxn)
     reaction = merge_reactants_and_agents(reaction)
 
     try:
         canonicalize_and_remove_atom_map = partial(canonicalize_smi, remove_mapping=True)
         reaction = apply_to_compounds(reaction, canonicalize_and_remove_atom_map)
     except NotCanonicalizableSmilesException:
-        return ""
+        return ReactionEquation([], [], [])
 
     reaction = sort_compounds(reaction)
-    return reaction.to_string(fragment_bond=fragment_bond)
+    return reaction
 
 
 def process_reaction_with_product_maps_atoms(
