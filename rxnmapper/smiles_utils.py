@@ -1,15 +1,10 @@
 """Contains functions needed to process reaction SMILES and their tokens"""
 from __future__ import absolute_import, division, print_function, unicode_literals
+
 import logging
-
 import re
-import numpy as np
 from functools import partial
-from typing import *
-from rdkit import Chem
-from rdkit.Chem import AllChem
-
-from functools import partial
+from typing import Any, List
 
 from rdkit import rdBase
 from rxn.chemutils.conversion import canonicalize_smiles
@@ -28,7 +23,7 @@ BAD_TOKS = ["[CLS]", "[SEP]"]  # Default Bad Tokens
 
 
 def tokenize(smiles: str) -> List[str]:
-    """ Tokenize a SMILES molecule or reaction """
+    """Tokenize a SMILES molecule or reaction"""
     regex = re.compile(SMI_REGEX_PATTERN)
     tokens = [token for token in regex.findall(smiles)]
     assert smiles == "".join(tokens)
@@ -36,7 +31,7 @@ def tokenize(smiles: str) -> List[str]:
 
 
 def get_atom_types(smiles: str):
-    """ Return atomic numbers for every token in (reaction) SMILES """
+    """Return atomic numbers for every token in (reaction) SMILES"""
     atom_tokens = get_atom_tokens_mask(smiles)
     if ">>" in smiles:
         precursors, products = smiles.split(">>")
@@ -91,8 +86,7 @@ def is_atom(token: str, special_tokens: List[str] = BAD_TOKS) -> bool:
     return (not is_bad) and normal_atom
 
 
-def number_tokens(tokens: List[str],
-                  special_tokens: List[str] = BAD_TOKS) -> List[int]:
+def number_tokens(tokens: List[str], special_tokens: List[str] = BAD_TOKS) -> List[int]:
     """Map list of tokens to a list of numbered atoms
 
     Args:
@@ -161,14 +155,14 @@ def is_mol_end(a: str, b: str) -> bool:
 
 def group_with(predicate, xs: List[Any]):
     """Takes a list and returns a list of lists where each sublist's elements are
-all satisfied pairwise comparison according to the provided function.
-Only adjacent elements are passed to the comparison function
+    all satisfied pairwise comparison according to the provided function.
+    Only adjacent elements are passed to the comparison function
 
-    Original implementation here: https://github.com/slavaGanzin/ramda.py/blob/master/ramda/group_with.py
+        Original implementation here: https://github.com/slavaGanzin/ramda.py/blob/master/ramda/group_with.py
 
-    Args:
-        predicate ( f(a,b) => bool): A function that takes two subsequent inputs and returns True or Fale
-        xs: List to group
+        Args:
+            predicate ( f(a,b) => bool): A function that takes two subsequent inputs and returns True or Fale
+            xs: List to group
     """
     out = []
     is_str = isinstance(xs, str)
@@ -220,9 +214,6 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
     from scipy.linalg import block_diag
 
     mol_tokens = split_into_mols(tokens)
-    altered_mol_tokens = [
-        m for m in mol_tokens if "." not in set(m) and ">>" not in set(m)
-    ]
 
     smiles = [
         tokens_to_smiles(mol, BAD_TOKS) for mol in mol_tokens
@@ -242,8 +233,7 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
     return rxn_mask
 
 
-def get_mask_for_tokens(tokens: List[str],
-                        special_tokens: List[str] = []) -> List[int]:
+def get_mask_for_tokens(tokens: List[str], special_tokens: List[str] = []) -> List[int]:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
@@ -262,9 +252,7 @@ def get_mask_for_tokens(tokens: List[str],
     return atom_token_mask
 
 
-def tok_mask(
-    tokens: List[str], special_tokens: List[str] = BAD_TOKS
-) -> np.array:
+def tok_mask(tokens: List[str], special_tokens: List[str] = BAD_TOKS) -> np.array:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
@@ -298,10 +286,8 @@ def get_atom_tokens_mask(smiles: str, special_tokens: List[str] = []):
     return get_mask_for_tokens(tokens, special_tokens)
 
 
-def canonicalize_and_atom_map(
-    smi: str, return_equivalent_atoms=False
-):
-    """ Remove atom mapping, canonicalize and return mapping numbers in order of canonicalization.
+def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
+    """Remove atom mapping, canonicalize and return mapping numbers in order of canonicalization.
 
     Args:
         smi: reaction SMILES str
@@ -322,14 +308,12 @@ def canonicalize_and_atom_map(
             atom.SetProp("atom_map", str(0))
     can_smi = Chem.MolToSmiles(mol)
     order = list(
-        mol.GetPropsAsDict(includePrivate=True,
-                           includeComputed=True)["_smilesAtomOutputOrder"]
+        mol.GetPropsAsDict(includePrivate=True, includeComputed=True)[
+            "_smilesAtomOutputOrder"
+        ]
     )
 
-    atom_maps_canonical = [
-        mol.GetAtoms()[idx].GetProp("atom_map") for idx in order
-    ]
-
+    atom_maps_canonical = [mol.GetAtoms()[idx].GetProp("atom_map") for idx in order]
 
     if not return_equivalent_atoms:
         return (can_smi, atom_maps_canonical)
@@ -452,9 +436,7 @@ def process_reaction(reaction: ReactionEquation) -> ReactionEquation:
     return reaction
 
 
-def process_reaction_with_product_maps_atoms(
-    rxn,  skip_if_not_in_precursors=False
-):
+def process_reaction_with_product_maps_atoms(rxn, skip_if_not_in_precursors=False):
     """
     Remove atom-mapping, move reagents to reactants and canonicalize reaction.
     If fragment group information is given, keep the groups together using
@@ -468,20 +450,10 @@ def process_reaction_with_product_maps_atoms(
     """
     reactants, reagents, products = rxn.split(">")
     try:
-        precursors = [
-            canonicalize_and_atom_map(r)
-            for r in reactants.split(".")
-        ]
+        precursors = [canonicalize_and_atom_map(r) for r in reactants.split(".")]
         if len(reagents) > 0:
-            precursors += [
-                canonicalize_and_atom_map(
-                    r
-                ) for r in reagents.split(".")
-            ]
-        products = [
-            canonicalize_and_atom_map(p)
-            for p in products.split(".")
-        ]
+            precursors += [canonicalize_and_atom_map(r) for r in reagents.split(".")]
+        products = [canonicalize_and_atom_map(p) for p in products.split(".")]
     except NotCanonicalizableSmilesException:
         return ""
     sorted_precursors = sorted(precursors, key=lambda x: x[0])
@@ -513,9 +485,7 @@ def process_reaction_with_product_maps_atoms(
             ):  # handle equivalent atoms
                 found_alternative = False
                 for atom_idx, precursor_map in enumerate(precursors_atom_maps):
-                    if (
-                        precursor_map == p_map
-                    ) and atom_idx not in products_maps:
+                    if (precursor_map == p_map) and atom_idx not in products_maps:
                         products_maps.append(atom_idx)
                         found_alternative = True
                         break

@@ -3,18 +3,20 @@
 Attentions are always calculated from the tokenized SMILES. To convert this into a proper atom mapping software,
 the need arises to map the tokens (which include parentheses, special tokens, and bonds) to the atom domain.
 
-This module contains all of the helper methods needed to convert the attention matrix into the atom domain, 
+This module contains all of the helper methods needed to convert the attention matrix into the atom domain,
 separating on reactants and products, including special tokens and not including special tokens, in the atom
 domain / in the token domain, and accounting for adjacent atoms in molecules.
 """
 import logging
-import numpy as np
 from typing import List
+
+import numpy as np
+
 from .smiles_utils import (
-    get_mask_for_tokens,
-    tokens_to_adjacency,
-    number_tokens,
     get_atom_types_smiles,
+    get_mask_for_tokens,
+    number_tokens,
+    tokens_to_adjacency,
 )
 
 LOGGER = logging.getLogger("attnmapper:attention")
@@ -33,13 +35,13 @@ class AttentionScorer:
         output_attentions: bool = False,
     ):
         """Convenience wrapper for mapping attentions into the atom domain, separated by reactants and products, and introducing neighborhood locality.
-        
+
         Args:
             rxn_smiles: Smiles for reaction
             tokens: Tokenized smiles of reaction of length N
             attentions: NxN attention matrix
             special_tokens: Special tokens used by the model that do not count as atoms
-            attention_multiplier: Amount to increase the attention connection from adjacent atoms of a newly mapped product atom to adjacent atoms of the newly mapped reactant atom. 
+            attention_multiplier: Amount to increase the attention connection from adjacent atoms of a newly mapped product atom to adjacent atoms of the newly mapped reactant atom.
                 Boosts the likelihood of an atom having the same adjacent atoms in reactants and products
             mask_mapped_product_atoms: If true, zero attentions to product atoms that have already been mapped
             mask_mapped_reactant_atoms: If true, zero attentions to reactant atoms that have already been mapped
@@ -129,7 +131,7 @@ class AttentionScorer:
 
     @property
     def atom_type_masked_attentions(self):
-        """Generate a """
+        """Generate a"""
         if self._atom_type_masked_attentions is None:
             self._atom_type_masked_attentions = np.multiply(
                 self.combined_attentions_filt_atoms, self.get_atom_type_mask()
@@ -217,24 +219,24 @@ class AttentionScorer:
 
     @property
     def pnums(self):
-        """Get atom indexes for just the product tokens. 
-        
+        """Get atom indexes for just the product tokens.
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         return self.token2atom[(self.split_ind + 1) :]
 
     @property
     def pnums_filt(self):
-        """Get atom indexes for just the product tokens, without the [SEP]. 
-        
+        """Get atom indexes for just the product tokens, without the [SEP].
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         return self.pnums
 
     @property
     def pnums_atoms(self):
-        """Get atom indexes for just the product ATOMS, without the [SEP]. 
-        
+        """Get atom indexes for just the product ATOMS, without the [SEP].
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         if self._pnums_atoms is None:
@@ -243,24 +245,24 @@ class AttentionScorer:
 
     @property
     def rnums(self):
-        """Get atom indexes for the reactant tokens. 
-        
+        """Get atom indexes for the reactant tokens.
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         return self.token2atom[: self.split_ind]
 
     @property
     def rnums_filt(self):
-        """Get atom indexes for just the reactant tokens, without the [CLS]. 
-        
+        """Get atom indexes for just the reactant tokens, without the [CLS].
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         return self.rnums[1:]
 
     @property
     def rnums_atoms(self):
-        """Get atom indexes for the reactant ATOMS, without the [CLS]. 
-        
+        """Get atom indexes for the reactant ATOMS, without the [CLS].
+
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
         """
         if self._rnums_atoms is None:
@@ -305,7 +307,7 @@ class AttentionScorer:
 
     def token_ind(self, atom_num) -> int:
         """Get token index from an atom number
-        
+
         Note that this is not a lossless mapping. -1 represents any special token, but it is always mapped to the token at index [N - 1]
         """
         return self.atom2token[atom_num]
@@ -319,7 +321,7 @@ class AttentionScorer:
         return self.atom_token_mask[token_ind]
 
     def get_neighboring_attentions(self, atom_num) -> np.ndarray:
-        """Get a vector of shape (n_atoms,) representing the neighboring attentions to an atom number. 
+        """Get a vector of shape (n_atoms,) representing the neighboring attentions to an atom number.
 
         Non-zero attentions are the attentions for neighboring atoms
         """
@@ -356,7 +358,7 @@ class AttentionScorer:
         return self._atom_type_mask
 
     def _get_combined_normalized_attentions(self):
-        """ Get normalized attention matrix from product atoms to candidate reactant atoms. """
+        """Get normalized attention matrix from product atoms to candidate reactant atoms."""
 
         combined_attentions = np.multiply(
             self.atom_type_masked_attentions, self.attention_multiplier_matrix
@@ -427,9 +429,11 @@ class AttentionScorer:
         output["mapping_tuples"] = mapping_tuples
         return output
 
-    def _update_attention_multiplier_matrix(self, product_atom:int, reactant_atom:int):
+    def _update_attention_multiplier_matrix(
+        self, product_atom: int, reactant_atom: int
+    ):
         """Perform the "neighbor multiplier" step of the atom mapping
-        
+
         Increase the attention connection between the neighbors of specified product atom
         to the neighbors of the specified reactant atom. A stateful operation.
 
