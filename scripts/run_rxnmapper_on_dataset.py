@@ -59,8 +59,8 @@ def main(
         results += rxn_mapper.get_attention_guided_atom_maps(
             rxns, canonicalize_rxns=canonicalize
         )
-    mapped = [r['mapped_rxn'] for r in results]
-    print('\n'.join(mapped))
+    mapped = [r["mapped_rxn"] for r in results]
+    print("\n".join(mapped))
     results_df = pd.DataFrame(results)
 
     results_df.to_json(output_path)

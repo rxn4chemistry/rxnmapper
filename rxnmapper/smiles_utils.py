@@ -6,10 +6,16 @@ import re
 from functools import partial
 from typing import Any, List
 
-from rdkit import rdBase
+import numpy as np
+from rdkit import rdBase, Chem
 from rxn.chemutils.conversion import canonicalize_smiles
 from rxn.chemutils.exceptions import InvalidSmiles
-from rxn.chemutils.reaction_equation import ReactionEquation, sort_compounds, apply_to_compounds, merge_reactants_and_agents
+from rxn.chemutils.reaction_equation import (
+    ReactionEquation,
+    apply_to_compounds,
+    merge_reactants_and_agents,
+    sort_compounds,
+)
 from rxn.chemutils.reaction_smiles import parse_any_reaction_smiles
 from rxn.chemutils.utils import remove_atom_mapping
 
@@ -63,7 +69,7 @@ def get_atom_types_smiles(smiles: str) -> List[int]:
     Returns:
         List of atom numbers for each atom in the smiles. Reports atoms in the same order they were passed in the original SMILES
     """
-    smiles_mol = Chem.MolFromSmiles(smiles.replace('~', '.'))
+    smiles_mol = Chem.MolFromSmiles(smiles.replace("~", "."))
 
     atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]
 
@@ -224,7 +230,7 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
         s for s in smiles if s not in {".", "~", ">>"}
     ]  # Only care about atoms
     altered_smiles = [
-        s.replace('~', '.') for s in altered_smiles
+        s.replace("~", ".") for s in altered_smiles
     ]  # Only care about atoms
     adjacency_mats = [
         get_adjacency_matrix(s) for s in altered_smiles
@@ -322,7 +328,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
 
 
 def generate_atom_mapped_reaction_atoms(
-    rxn: str, product_atom_maps, expected_atom_maps=None, canonical:bool = False
+    rxn: str, product_atom_maps, expected_atom_maps=None, canonical: bool = False
 ) -> ReactionEquation:
     """
     Generate atom-mapped reaction from unmapped reaction and
@@ -355,9 +361,7 @@ def generate_atom_mapped_reaction_atoms(
                 # atom maps start at an index of 1
                 corresponding_product_atom_map = product_atom_maps.index(i) + 1
                 precursors_atom_maps.append(corresponding_product_atom_map)
-                atom.SetProp(
-                    "molAtomMapNumber", str(corresponding_product_atom_map)
-                )
+                atom.SetProp("molAtomMapNumber", str(corresponding_product_atom_map))
 
                 indices = [idx for idx, x in enumerate(product_atom_maps) if x == i]
 
@@ -368,11 +372,13 @@ def generate_atom_mapped_reaction_atoms(
                 if expected_atom_maps is not None:
                     if (
                         i not in expected_atom_maps
-                        or corresponding_product_atom_map !=
-                        expected_atom_maps.index(i) + 1
+                        or corresponding_product_atom_map
+                        != expected_atom_maps.index(i) + 1
                     ):
                         differing_maps.append(corresponding_product_atom_map)
-        atom_mapped_precursors_list.append(Chem.MolToSmiles(precursor_mol, canonical=canonical))
+        atom_mapped_precursors_list.append(
+            Chem.MolToSmiles(precursor_mol, canonical=canonical)
+        )
 
     i = -1
     atom_mapped_products_list = []
@@ -381,9 +387,13 @@ def generate_atom_mapped_reaction_atoms(
             i += 1
             atom_map = product_mapping_dict.get(i, i + 1)
             atom.SetProp("molAtomMapNumber", str(atom_map))
-        atom_mapped_products_list.append(Chem.MolToSmiles(products_mol, canonical=canonical))
+        atom_mapped_products_list.append(
+            Chem.MolToSmiles(products_mol, canonical=canonical)
+        )
 
-    atom_mapped_rxn = ReactionEquation(atom_mapped_precursors_list, [], atom_mapped_products_list)
+    atom_mapped_rxn = ReactionEquation(
+        atom_mapped_precursors_list, [], atom_mapped_products_list
+    )
 
     if expected_atom_maps is not None:
         return atom_mapped_rxn, differing_maps
@@ -396,7 +406,7 @@ class NotCanonicalizableSmilesException(ValueError):
 
 
 def canonicalize_smi(smi: str, remove_mapping=False) -> str:
-    """ Convert a SMILES string into its canonicalized form
+    """Convert a SMILES string into its canonicalized form
 
     Args:
         smi: Reaction SMILES
@@ -427,7 +437,9 @@ def process_reaction(reaction: ReactionEquation) -> ReactionEquation:
     reaction = merge_reactants_and_agents(reaction)
 
     try:
-        canonicalize_and_remove_atom_map = partial(canonicalize_smi, remove_mapping=True)
+        canonicalize_and_remove_atom_map = partial(
+            canonicalize_smi, remove_mapping=True
+        )
         reaction = apply_to_compounds(reaction, canonicalize_and_remove_atom_map)
     except NotCanonicalizableSmilesException:
         return ReactionEquation([], [], [])

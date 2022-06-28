@@ -17,10 +17,13 @@ setup(
     py_modules=["rxnmapper"],
     description="Reaction atom-mapping from transfomers",
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    license='MIT',
+    long_description_content_type="text/markdown",
+    license="MIT",
     install_requires=[
-        'transformers==4.0.0', 'torch==1.5.0', 'scipy==1.4.1', 'rxn-chem-utils>=1.0.1'
+        "transformers==4.0.0",
+        "torch==1.5.0",
+        "scipy==1.4.1",
+        "rxn-chem-utils>=1.0.1",
     ],
     packages=find_packages(),
     package_data={

@@ -70,7 +70,7 @@ def test_fragment_bond():
     expected = [
         {
             "mapped_rxn": "Br[CH2:2][CH3:1].[Na+]~[O-:3][CH2:4][CH3:5].[H-]~[Na+]>>[CH3:1][CH2:2][O:3][CH2:4][CH3:5]",
-            #"confidence": 0.9827885966942009,
+            # "confidence": 0.9827885966942009,
             "confidence": 0.9606074439250337,
         }
     ]
@@ -94,6 +94,7 @@ def test_no_canonicalization():
     for res, exp in zip(results, expected):
         is_correct_map(res, exp)
 
+
 def test_multiple_products():
     # Reverse the reaction from the previous example
     rxns = ["CCOCC>>CC[O-]~[Na+].BrCC"]
@@ -116,6 +117,6 @@ def test_multiple_products():
 
 def test_can_smi():
     # TEmporary test...
-    assert canonicalize_smi('C(C)O') == 'CCO'
-    assert canonicalize_smi('[CH2:4](C)O') == 'C[CH2:4]O'
-    assert canonicalize_smi('[CH2:4](C)O', True) == 'CCO'
+    assert canonicalize_smi("C(C)O") == "CCO"
+    assert canonicalize_smi("[CH2:4](C)O") == "C[CH2:4]O"
+    assert canonicalize_smi("[CH2:4](C)O", True) == "CCO"

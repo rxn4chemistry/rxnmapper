@@ -3,22 +3,20 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import logging
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 import numpy as np
 import pkg_resources
 import torch
-from transformers import AlbertModel, BertModel, RobertaModel
-
-from typing import Optional, List, Dict, Tuple, Union, Iterable, Iterator, Any
-
 from rxn.chemutils.reaction_equation import ReactionEquation
 from rxn.chemutils.reaction_smiles import (
-    determine_format, parse_any_reaction_smiles,
-    to_reaction_smiles, ReactionFormat
+    ReactionFormat,
+    determine_format,
+    parse_any_reaction_smiles,
+    to_reaction_smiles,
 )
-from transformers import PreTrainedModel, AlbertModel, BertModel, RobertaModel
-from .tokenization_smiles import SmilesTokenizer
+from transformers import AlbertModel, BertModel, RobertaModel
+
 from .attention import AttentionScorer
 from .smiles_utils import generate_atom_mapped_reaction_atoms, process_reaction
 from .tokenization_smiles import SmilesTokenizer
@@ -209,7 +207,7 @@ class RXNMapper:
         return results
 
     def get_attention_guided_atom_maps_for_reactions(
-            self,
+        self,
         reactions: List[ReactionEquation],
         zero_set_p: bool = True,
         zero_set_r: bool = True,
@@ -230,7 +228,12 @@ class RXNMapper:
 
         # The transformer has been trained on the format containing tildes.
         # This means that we must convert to that format for use with the model.
-        rxns = [to_reaction_smiles(reaction, reaction_format=ReactionFormat.STANDARD_WITH_TILDE) for reaction in reactions]
+        rxns = [
+            to_reaction_smiles(
+                reaction, reaction_format=ReactionFormat.STANDARD_WITH_TILDE
+            )
+            for reaction in reactions
+        ]
 
         attns = self.convert_batch_to_attns(
             rxns, force_layer=force_layer, force_head=force_head
@@ -257,8 +260,7 @@ class RXNMapper:
                 rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
             )
             result = {
-                "confidence":
-                    np.prod(output["confidences"]),
+                "confidence": np.prod(output["confidences"]),
             }
             if detailed_output:
                 result["pxr_mapping_vector"] = output["pxr_mapping_vector"]
