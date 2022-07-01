@@ -70,7 +70,20 @@ def test_fragment_bond():
     expected = [
         {
             "mapped_rxn": "Br[CH2:2][CH3:1].[Na+]~[O-:3][CH2:4][CH3:5].[H-]~[Na+]>>[CH3:1][CH2:2][O:3][CH2:4][CH3:5]",
-            # "confidence": 0.9827885966942009,
+            "confidence": 0.9606074439250337,
+        }
+    ]
+
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns)
+    for res, exp in zip(results, expected):
+        is_correct_map(res, exp)
+
+
+def test_extended_smiles_format():
+    rxns = ["CC[O-].[Na+].BrCC.[Na+].[H-]>>CCOCC |f:0.1,3.4|"]
+    expected = [
+        {
+            "mapped_rxn": "Br[CH2:2][CH3:1].[Na+].[O-:3][CH2:4][CH3:5].[H-].[Na+]>>[CH3:1][CH2:2][O:3][CH2:4][CH3:5] |f:1.2,3.4|",
             "confidence": 0.9606074439250337,
         }
     ]
@@ -95,6 +108,22 @@ def test_no_canonicalization():
         is_correct_map(res, exp)
 
 
+def test_works_on_invalid_valence():
+    # Here, "BrCFC" and "CCOCFC" are valid SMILES with invalid valence. Still,
+    # the model is able to do a prediction for them.
+    rxns = ["CCO.BrCFC>>CCOCFC"]
+    expected = [
+        {
+            "mapped_rxn": "[CH3:1][CH2:2][OH:3].Br[CH2:4][F:5][CH3:6]>>[CH3:1][CH2:2][O:3][CH2:4][F:5][CH3:6]",
+            "confidence": 0.9730222157275086,
+        }
+    ]
+
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
+    for res, exp in zip(results, expected):
+        is_correct_map(res, exp)
+
+
 def test_multiple_products():
     # Reverse the reaction from the previous example
     rxns = ["CCOCC>>CC[O-]~[Na+].BrCC"]
@@ -109,14 +138,3 @@ def test_multiple_products():
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
     for res, exp in zip(results, expected):
         is_correct_map(res, exp)
-
-
-# TODO: extended format... It looks like this is implemented but not super well.
-#     -> switch to ReactionEquation as soon as possible!
-
-
-def test_can_smi():
-    # TEmporary test...
-    assert canonicalize_smi("C(C)O") == "CCO"
-    assert canonicalize_smi("[CH2:4](C)O") == "C[CH2:4]O"
-    assert canonicalize_smi("[CH2:4](C)O", True) == "CCO"

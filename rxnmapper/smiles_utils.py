@@ -8,7 +8,7 @@ from typing import Any, List
 
 import numpy as np
 from rdkit import rdBase, Chem
-from rxn.chemutils.conversion import canonicalize_smiles
+from rxn.chemutils.conversion import canonicalize_smiles, smiles_to_mol
 from rxn.chemutils.exceptions import InvalidSmiles
 from rxn.chemutils.reaction_equation import (
     ReactionEquation,
@@ -69,7 +69,7 @@ def get_atom_types_smiles(smiles: str) -> List[int]:
     Returns:
         List of atom numbers for each atom in the smiles. Reports atoms in the same order they were passed in the original SMILES
     """
-    smiles_mol = Chem.MolFromSmiles(smiles.replace("~", "."))
+    smiles_mol = smiles_to_mol(smiles.replace("~", "."), sanitize=False)
 
     atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]
 
@@ -129,7 +129,7 @@ def get_graph_distance_matrix(smiles: str):
     Returns:
         Numpy array representing the graphwise distance between each atom and every other atom in the molecular SMILES
     """
-    mol = Chem.MolFromSmiles(smiles)
+    mol = smiles_to_mol(smiles, sanitize=False)
     return Chem.GetDistanceMatrix(mol)
 
 
@@ -145,7 +145,7 @@ def get_adjacency_matrix(smiles: str):
         Equivalent to `distance_matrix[distance_matrix == 1]`
     """
 
-    mol = Chem.MolFromSmiles(smiles)
+    mol = smiles_to_mol(smiles, sanitize=False)
     return Chem.GetAdjacencyMatrix(mol)
 
 
@@ -302,9 +302,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
     Returns:
 
     """
-    mol = Chem.MolFromSmiles(smi)
-    if not mol:
-        raise NotCanonicalizableSmilesException("Molecule not canonicalizable")
+    mol = smiles_to_mol(smi, sanitize=False)
     for atom in mol.GetAtoms():
         if atom.HasProp("molAtomMapNumber"):
             atom_map = atom.GetAtomMapNum()
@@ -343,8 +341,8 @@ def generate_atom_mapped_reaction_atoms(
     """
 
     precs, reags, prods = parse_any_reaction_smiles(rxn)
-    precursors_mols = [Chem.MolFromSmiles(pr) for pr in precs]
-    products_mols = [Chem.MolFromSmiles(prod) for prod in prods]
+    precursors_mols = [smiles_to_mol(pr, sanitize=False) for pr in precs]
+    products_mols = [smiles_to_mol(prod, sanitize=False) for prod in prods]
 
     precursors_atom_maps = []
 
@@ -401,10 +399,6 @@ def generate_atom_mapped_reaction_atoms(
     return atom_mapped_rxn
 
 
-class NotCanonicalizableSmilesException(ValueError):
-    pass
-
-
 def canonicalize_smi(smi: str, remove_mapping=False) -> str:
     """Convert a SMILES string into its canonicalized form
 
@@ -412,16 +406,16 @@ def canonicalize_smi(smi: str, remove_mapping=False) -> str:
         smi: Reaction SMILES
         remove_mapping: If True, remove atom mapping information from the canonicalized SMILES output
 
+    Raises:
+        InvalidSmiles: if the SMILES string cannot be canonicalized.
+
     Returns:
         SMILES reaction, canonicalized, as a string
     """
     if remove_mapping:
         smi = remove_atom_mapping(smi)
 
-    try:
-        return canonicalize_smiles(smi)
-    except InvalidSmiles as e:
-        raise NotCanonicalizableSmilesException("Molecule not canonicalizable") from e
+    return canonicalize_smiles(smi)
 
 
 def process_reaction(reaction: ReactionEquation) -> ReactionEquation:
@@ -441,7 +435,7 @@ def process_reaction(reaction: ReactionEquation) -> ReactionEquation:
             canonicalize_smi, remove_mapping=True
         )
         reaction = apply_to_compounds(reaction, canonicalize_and_remove_atom_map)
-    except NotCanonicalizableSmilesException:
+    except InvalidSmiles:
         return ReactionEquation([], [], [])
 
     reaction = sort_compounds(reaction)
@@ -466,7 +460,7 @@ def process_reaction_with_product_maps_atoms(rxn, skip_if_not_in_precursors=Fals
         if len(reagents) > 0:
             precursors += [canonicalize_and_atom_map(r) for r in reagents.split(".")]
         products = [canonicalize_and_atom_map(p) for p in products.split(".")]
-    except NotCanonicalizableSmilesException:
+    except InvalidSmiles:
         return ""
     sorted_precursors = sorted(precursors, key=lambda x: x[0])
     sorted_products = sorted(products, key=lambda x: x[0])

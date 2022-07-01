@@ -23,7 +23,8 @@ from .tokenization_smiles import SmilesTokenizer
 
 MODEL_TYPE_DICT = {"bert": BertModel, "albert": AlbertModel, "roberta": RobertaModel}
 
-LOGGER = logging.getLogger("rxnmapper:core")
+_logger = logging.getLogger(__name__)
+_logger.addHandler(logging.NullHandler())
 
 
 class RXNMapper:
@@ -35,7 +36,7 @@ class RXNMapper:
 
     def __init__(
         self,
-        config: Dict = {},
+        config: Optional[Dict[str, Any]] = None,
         logger: Optional[logging.Logger] = None,
     ):
         """
@@ -52,6 +53,8 @@ class RXNMapper:
             >>> from rxnmapper import RXNMapper
             >>> rxn_mapper = RXNMapper()
         """
+        if config is None:
+            config = {}
 
         # Config takes "model_path", "model_type", "attention_multiplier", "head", "layers"
         self.model_path = config.get(
@@ -65,7 +68,7 @@ class RXNMapper:
         self.head = config.get("head", 5)
         self.layers = config.get("layers", [10])
 
-        self.logger = logger if logger else LOGGER
+        self.logger = logger if logger else _logger
         self.model, self.tokenizer = self._load_model_and_tokenizer()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
