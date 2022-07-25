@@ -3,6 +3,7 @@ import logging
 import click
 import pandas as pd
 from rxn.utilities.containers import chunker
+from tqdm import tqdm
 
 from rxnmapper import RXNMapper
 
@@ -49,7 +50,8 @@ def main(
     results = []
     rxns = df["rxn"].tolist()
 
-    for rxns_chunk in chunker(rxns, chunk_size=batch_size):
+    number_batches = (rxns + 1) // batch_size
+    for rxns_chunk in tqdm(chunker(rxns, chunk_size=batch_size), total=number_batches):
         results += rxn_mapper.get_attention_guided_atom_maps(
             rxns_chunk, canonicalize_rxns=canonicalize, detailed_output=detailed
         )
