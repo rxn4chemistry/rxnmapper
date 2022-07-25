@@ -1,8 +1,16 @@
 import numpy as np
+import pytest
 
 from rxnmapper import RXNMapper
 
-rxn_mapper = RXNMapper()
+
+@pytest.fixture(scope="module")
+def rxn_mapper() -> RXNMapper:
+    """
+    Fixture to get the RXNMapper, cached with module scope so that the weights
+    do not need to be loaded multiple times.
+    """
+    return RXNMapper()
 
 
 def is_correct_map(result, exp):
@@ -10,7 +18,7 @@ def is_correct_map(result, exp):
     assert np.isclose(result["confidence"], exp["confidence"])
 
 
-def test_example_maps_adapted():
+def test_example_maps_adapted(rxn_mapper: RXNMapper):
     rxns = [
         "CC(C)S.CN(C)C=O.Fc1cccnc1F.O=C([O-])[O-].[K+].[K+]>>CC(C)Sc1ncccc1F",
         "C1COCCO1.CC(C)(C)OC(=O)CONC(=O)NCc1cccc2ccccc12.Cl>>O=C(O)CONC(=O)NCc1cccc2ccccc12",
@@ -36,7 +44,7 @@ def test_example_maps_adapted():
         is_correct_map(res, exp)
 
 
-def test_example_maps():
+def test_example_maps(rxn_mapper: RXNMapper):
     rxns = [
         "CC(C)S.CN(C)C=O.Fc1cccnc1F.O=C([O-])[O-].[K+].[K+]>>CC(C)Sc1ncccc1F",
         "C1COCCO1.CC(C)(C)OC(=O)CONC(=O)NCc1cccc2ccccc12.Cl>>O=C(O)CONC(=O)NCc1cccc2ccccc12",
@@ -62,7 +70,7 @@ def test_example_maps():
         is_correct_map(res, exp)
 
 
-def test_fragment_bond():
+def test_fragment_bond(rxn_mapper: RXNMapper):
     rxns = ["CC[O-]~[Na+].BrCC.[Na+]~[H-]>>CCOCC"]
     expected = [
         {
@@ -76,7 +84,7 @@ def test_fragment_bond():
         is_correct_map(res, exp)
 
 
-def test_extended_smiles_format():
+def test_extended_smiles_format(rxn_mapper: RXNMapper):
     rxns = ["CC[O-].[Na+].BrCC.[Na+].[H-]>>CCOCC |f:0.1,3.4|"]
     expected = [
         {
@@ -90,9 +98,11 @@ def test_extended_smiles_format():
         is_correct_map(res, exp)
 
 
-def test_no_canonicalization():
+def test_no_canonicalization(rxn_mapper: RXNMapper):
     rxns = ["C(C)O.BrC(C)>>CCOCC"]
-    # Note that one of the parentheses is still here, for the other one there is probably not much we can do.
+    # Note that in the mapped RXN, the first reactant still has a parenthesis (which is
+    # desired). The other parenthesis disappears, but there is probably not much we can
+    # do here to keep it.
     expected = [
         {
             "mapped_rxn": "[CH2:2]([CH3:1])[OH:3].Br[CH2:4][CH3:5]>>[CH3:1][CH2:2][O:3][CH2:4][CH3:5]",
@@ -105,7 +115,7 @@ def test_no_canonicalization():
         is_correct_map(res, exp)
 
 
-def test_works_on_invalid_valence():
+def test_reaction_with_invalid_valence(rxn_mapper: RXNMapper):
     # Here, "BrCFC" and "CCOCFC" are valid SMILES with invalid valence. Still,
     # the model is able to do a prediction for them.
     rxns = ["CCO.BrCFC>>CCOCFC"]
@@ -121,14 +131,13 @@ def test_works_on_invalid_valence():
         is_correct_map(res, exp)
 
 
-def test_multiple_products():
+def test_multiple_products(rxn_mapper: RXNMapper):
     # Reverse the reaction from the previous example
-    rxns = ["CCOCC>>CC[O-]~[Na+].BrCC"]
+    rxns = ["CCOCC.[Na+]~[Br-]>>CC[O-]~[Na+].BrCC"]
     expected = [
         {
-            # Note: still some problems here... mapping on Na?...
-            "mapped_rxn": "[CH3:1][CH2:2][O:6][CH2:5][CH3:4]>>[CH3:1][CH2:2][Br:3].[CH3:4][CH2:5][O-:6]~[Na+:7]",
-            "confidence": 0.8353619858859898,
+            "mapped_rxn": "[CH3:1][CH2:2][O:6][CH2:5][CH3:4].[Br-:3]~[Na+:7]>>[CH3:1][CH2:2][Br:3].[CH3:4][CH2:5][O-:6]~[Na+:7]",
+            "confidence": 0.7312865053856896,
         }
     ]
 
