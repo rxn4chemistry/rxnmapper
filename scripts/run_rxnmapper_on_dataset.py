@@ -54,10 +54,10 @@ def main(
             rxns_chunk, canonicalize_rxns=canonicalize, detailed_output=detailed
         )
 
-    mapped = [r["mapped_rxn"] for r in results]
-    print("\n".join(mapped))
-    results_df = pd.DataFrame(results)
+    for r in results:
+        print(r["mapped_rxn"])
 
+    results_df = pd.DataFrame(results)
     results_df.to_json(output_path)
 
 

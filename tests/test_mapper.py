@@ -2,9 +2,6 @@ import numpy as np
 
 from rxnmapper import RXNMapper
 
-# TODO: Move to fixture if test suite grows
-from rxnmapper.smiles_utils import canonicalize_smi
-
 rxn_mapper = RXNMapper()
 
 

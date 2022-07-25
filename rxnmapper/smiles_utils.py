@@ -7,7 +7,7 @@ from functools import partial
 from typing import Any, List
 
 import numpy as np
-from rdkit import rdBase, Chem
+from rdkit import Chem, rdBase
 from rxn.chemutils.conversion import canonicalize_smiles, smiles_to_mol
 from rxn.chemutils.exceptions import InvalidSmiles
 from rxn.chemutils.reaction_equation import (
