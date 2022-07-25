@@ -50,7 +50,7 @@ def main(
     results = []
     rxns = df["rxn"].tolist()
 
-    number_batches = (rxns + 1) // batch_size
+    number_batches = (len(rxns) - 1) // batch_size + 1
     for rxns_chunk in tqdm(chunker(rxns, chunk_size=batch_size), total=number_batches):
         results += rxn_mapper.get_attention_guided_atom_maps(
             rxns_chunk, canonicalize_rxns=canonicalize, detailed_output=detailed
