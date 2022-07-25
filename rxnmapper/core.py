@@ -223,7 +223,9 @@ class RXNMapper:
         """Generate atom-mapping for ReactionEquation instances.
 
         See documentation of get_attention_guided_atom_maps() for details on the
-        arguments and return value.
+        arguments and return value. The only difference is that the mapped reaction
+        is returned as a ReactionEquation, which is added to the dictionary
+        outside of this function depending on the required format.
         """
 
         if canonicalize_rxns:

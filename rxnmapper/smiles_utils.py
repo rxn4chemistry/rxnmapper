@@ -229,9 +229,6 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
     altered_smiles = [
         s for s in smiles if s not in {".", "~", ">>"}
     ]  # Only care about atoms
-    altered_smiles = [
-        s.replace("~", ".") for s in altered_smiles
-    ]  # Only care about atoms
     adjacency_mats = [
         get_adjacency_matrix(s) for s in altered_smiles
     ]  # Or filter if we don't need to save the spot
@@ -333,16 +330,17 @@ def generate_atom_mapped_reaction_atoms(
     product-2-reactant atoms mapping vector.
     Args:
         rxn: unmapped reaction, in the format that the transformer model relies on.
-        product_atom_maps: product to reactant atom maps
-        expected_atom_maps: (optional) if given return the differences
+        product_atom_maps: product to reactant atom maps.
+        expected_atom_maps: if given, return the differences.
+        canonical: whether to canonicalize the resulting SMILES.
 
     Returns: Atom-mapped reaction
 
     """
 
-    precs, reags, prods = parse_any_reaction_smiles(rxn)
-    precursors_mols = [smiles_to_mol(pr, sanitize=False) for pr in precs]
-    products_mols = [smiles_to_mol(prod, sanitize=False) for prod in prods]
+    reactants, agents, products = parse_any_reaction_smiles(rxn)
+    precursors_mols = [smiles_to_mol(pr, sanitize=False) for pr in reactants + agents]
+    products_mols = [smiles_to_mol(prod, sanitize=False) for prod in products]
 
     precursors_atom_maps = []
 
@@ -399,7 +397,7 @@ def generate_atom_mapped_reaction_atoms(
     return atom_mapped_rxn
 
 
-def canonicalize_smi(smi: str, remove_mapping=False) -> str:
+def canonicalize_smi(smi: str, remove_mapping: bool = False) -> str:
     """Convert a SMILES string into its canonicalized form
 
     Args:
