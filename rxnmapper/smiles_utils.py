@@ -64,11 +64,12 @@ def get_atom_types_smiles(smiles: str) -> List[int]:
     """Convert each atom in a SMILES into a list of their atomic numbers
 
     Args:
-        smiles: SMILES representation of molecule
+        smiles: SMILES representation of a molecule or set of molecules.
 
     Returns:
         List of atom numbers for each atom in the smiles. Reports atoms in the same order they were passed in the original SMILES
     """
+    # If `smiles` is a set of molecules, it may contain a "~".
     smiles_mol = smiles_to_mol(smiles.replace("~", "."), sanitize=False)
 
     atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]
