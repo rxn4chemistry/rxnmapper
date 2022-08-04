@@ -69,7 +69,7 @@ class AttentionScorer:
         # Mask of atoms
         self.atom_token_mask = np.array(
             get_mask_for_tokens(self.tokens, self.special_tokens)
-        ).astype(np.bool)
+        ).astype(bool)
 
         # Atoms numbered in the array
         self.token2atom = np.array(number_tokens(tokens))
@@ -78,7 +78,7 @@ class AttentionScorer:
         }
 
         # Adjacency graph for all tokens
-        self.adjacency_matrix = tokens_to_adjacency(tokens).astype(np.bool)
+        self.adjacency_matrix = tokens_to_adjacency(tokens).astype(bool)
 
         self._precursors_atom_types = None
         self._product_atom_types = None
