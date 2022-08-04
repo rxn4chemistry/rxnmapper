@@ -6,13 +6,11 @@ Enable robust atom mapping on valid reaction SMILES. The atom-mapping informatio
 - [Unsupervised attention-guided atom-mapping preprint](http://dx.doi.org/10.26434/chemrxiv.12298559): presented at the ML Interpretability for Scientific Discovery ICML workshop, 2020.
 
 ## Installation
-For all installations, we recommend using `conda` to get the necessary `rdkit` dependency:
 
 ### From pip
 ```console
 conda create -n rxnmapper python=3.6 -y
 conda activate rxnmapper
-conda install -c rdkit rdkit=2020.03.3.0
 pip install rxnmapper
 ```
 
@@ -22,10 +20,24 @@ You can install the package and setup the environment directly from github using
 ```console
 git clone https://github.com/rxn4chemistry/rxnmapper.git 
 cd rxnmapper
-conda env create -f environment.yml
+conda create -n rxnmapper python=3.6 -y
 conda activate rxnmapper
 pip install -e .
-pip install -r requirements.txt
+```
+
+### RDkit
+
+In both installation settings above, the `RDKit` dependency is not installed automatically.
+It can be installed via Conda or Pypi:
+
+```bash
+# Install RDKit from Conda
+conda install -c conda-forge rdkit
+
+# Install RDKit from Pypi
+pip install rdkit
+# for Python<3.7
+# pip install rdkit-pypi
 ```
 
 ## Usage
@@ -52,7 +64,7 @@ The results contain the mapped reactions and confidence scores:
 
 You can run the examples above with the test suite as well:
 
-1. `pip install -r dev_requirements.txt` 
+1. In your Conda environment: `pip install -e .[dev]`
 2. `pytest tests` from the root 
 
 ## Examples
