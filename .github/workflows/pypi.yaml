@@ -1,0 +1,28 @@
+name: Build and publish rxnmapper on PyPI
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  build-and-publish:
+    name: Build and publish rxnmapper on PyPI
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Python setup 3.6
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+    - name: Install build package (for packaging)
+      run: pip install --upgrade build
+    - name: Build dist
+      run: python -m build
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_TOKEN }}
+        skip_existing: true
