@@ -8,7 +8,7 @@ separating on reactants and products, including special tokens and not including
 domain / in the token domain, and accounting for adjacent atoms in molecules.
 """
 import logging
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 
@@ -80,18 +80,18 @@ class AttentionScorer:
         # Adjacency graph for all tokens
         self.adjacency_matrix = tokens_to_adjacency(tokens).astype(bool)
 
-        self._precursors_atom_types = None
-        self._product_atom_types = None
-        self._rnums_atoms = None
-        self._pnums_atoms = None
-        self._nreactant_atoms = None
-        self._nproduct_atoms = None
-        self._adjacency_matrix_products = None
-        self._adjacency_matrix_precursors = None
-        self._pxr_filt_atoms = None
-        self._rxp_filt_atoms = None
-        self._atom_type_mask = None
-        self._atom_type_masked_attentions = None
+        self._precursors_atom_types: Optional[List[int]] = None
+        self._product_atom_types: Optional[List[int]] = None
+        self._rnums_atoms: Optional[np.ndarray] = None
+        self._pnums_atoms: Optional[np.ndarray] = None
+        self._nreactant_atoms: Optional[int] = None
+        self._nproduct_atoms: Optional[int] = None
+        self._adjacency_matrix_products: Optional[np.ndarray] = None
+        self._adjacency_matrix_precursors: Optional[np.ndarray] = None
+        self._pxr_filt_atoms: Optional[np.ndarray] = None
+        self._rxp_filt_atoms: Optional[np.ndarray] = None
+        self._atom_type_mask: Optional[np.ndarray] = None
+        self._atom_type_masked_attentions: Optional[np.ndarray] = None
 
         # Attention multiplication matrix
         self.attention_multiplier_matrix = np.ones_like(
@@ -99,12 +99,12 @@ class AttentionScorer:
         ).astype(float)
 
     @property
-    def atom_attentions(self):
+    def atom_attentions(self) -> np.ndarray:
         """The MxM attention matrix, selected for only attentions that are from atoms, to atoms"""
         return self.attentions[self.atom_token_mask].T[self.atom_token_mask].T
 
     @property
-    def adjacent_atom_attentions(self):
+    def adjacent_atom_attentions(self) -> np.ndarray:
         """The MxM attention matrix, where all attentions are zeroed if the attention is not to an adjacent atom."""
         atts = self.atom_attentions.copy()
         mask = np.logical_not(self.adjacency_matrix)
@@ -112,7 +112,7 @@ class AttentionScorer:
         return atts
 
     @property
-    def adjacency_matrix_reactants(self):
+    def adjacency_matrix_reactants(self) -> np.ndarray:
         """The adjacency matrix of the reactants"""
         if self._adjacency_matrix_precursors is None:
             self._adjacency_matrix_precursors = self.adjacency_matrix[
@@ -121,7 +121,7 @@ class AttentionScorer:
         return self._adjacency_matrix_precursors
 
     @property
-    def adjacency_matrix_products(self):
+    def adjacency_matrix_products(self) -> np.ndarray:
         """The adjacency matrix of the products"""
         if self._adjacency_matrix_products is None:
             self._adjacency_matrix_products = self.adjacency_matrix[
@@ -130,7 +130,7 @@ class AttentionScorer:
         return self._adjacency_matrix_products
 
     @property
-    def atom_type_masked_attentions(self):
+    def atom_type_masked_attentions(self) -> np.ndarray:
         """Generate a"""
         if self._atom_type_masked_attentions is None:
             self._atom_type_masked_attentions = np.multiply(
@@ -139,17 +139,17 @@ class AttentionScorer:
         return self._atom_type_masked_attentions
 
     @property
-    def rxp(self):
+    def rxp(self) -> np.ndarray:
         """Subset of attentions relating the reactants to the products"""
         return self.attentions[: self.split_ind, (self.split_ind + 1) :]
 
     @property
-    def rxp_filt(self):
+    def rxp_filt(self) -> np.ndarray:
         """RXP without the special tokens"""
         return self.rxp[1:, :-1]
 
     @property
-    def rxp_filt_atoms(self):
+    def rxp_filt_atoms(self) -> np.ndarray:
         """RXP only the atoms, no special tokens"""
         if self._rxp_filt_atoms is None:
             self._rxp_filt_atoms = self.rxp[[i != -1 for i in self.rnums]][
@@ -158,18 +158,18 @@ class AttentionScorer:
         return self._rxp_filt_atoms
 
     @property
-    def pxr(self):
+    def pxr(self) -> np.ndarray:
         """Subset of attentions relating the products to the reactants"""
         i = self.split_ind
         return self.attentions[(i + 1) :, :i]
 
     @property
-    def pxr_filt(self):
+    def pxr_filt(self) -> np.ndarray:
         """PXR without the special tokens"""
         return self.pxr[:-1, 1:]
 
     @property
-    def pxr_filt_atoms(self):
+    def pxr_filt_atoms(self) -> np.ndarray:
         """PXR only the atoms, no special tokens"""
         if self._pxr_filt_atoms is None:
             self._pxr_filt_atoms = self.pxr[[i != -1 for i in self.pnums]][
@@ -178,22 +178,22 @@ class AttentionScorer:
         return self._pxr_filt_atoms
 
     @property
-    def combined_attentions(self):
+    def combined_attentions(self) -> np.ndarray:
         """Summed pxr and rxp"""
         return self.pxr + self.rxp.T
 
     @property
-    def combined_attentions_filt(self):
+    def combined_attentions_filt(self) -> np.ndarray:
         """Summed pxr_filt and rxp_filt (no special tokens)"""
         return self.pxr_filt + self.rxp_filt.T
 
     @property
-    def combined_attentions_filt_atoms(self):
+    def combined_attentions_filt_atoms(self) -> np.ndarray:
         """Summed pxr_filt_atoms and rxp_filt_atoms (no special tokens, no "non-atom" tokens)"""
         return self.pxr_filt_atoms + self.rxp_filt_atoms.T
 
     @property
-    def combined_attentions_filt_atoms_same_type(self):
+    def combined_attentions_filt_atoms_same_type(self) -> np.ndarray:
         """Summed pxr_filt_atoms and rxp_filt_atoms (no special tokens, no "non-atom" tokens). All attentions to atoms of a different type are zeroed"""
 
         atom_type_mask = np.zeros(self.combined_attentions_filt_atoms.shape)
@@ -218,7 +218,7 @@ class AttentionScorer:
         return normalized_attentions
 
     @property
-    def pnums(self):
+    def pnums(self) -> np.ndarray:
         """Get atom indexes for just the product tokens.
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -226,7 +226,7 @@ class AttentionScorer:
         return self.token2atom[(self.split_ind + 1) :]
 
     @property
-    def pnums_filt(self):
+    def pnums_filt(self) -> np.ndarray:
         """Get atom indexes for just the product tokens, without the [SEP].
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -234,7 +234,7 @@ class AttentionScorer:
         return self.pnums
 
     @property
-    def pnums_atoms(self):
+    def pnums_atoms(self) -> np.ndarray:
         """Get atom indexes for just the product ATOMS, without the [SEP].
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -244,7 +244,7 @@ class AttentionScorer:
         return self._pnums_atoms
 
     @property
-    def rnums(self):
+    def rnums(self) -> np.ndarray:
         """Get atom indexes for the reactant tokens.
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -252,7 +252,7 @@ class AttentionScorer:
         return self.token2atom[: self.split_ind]
 
     @property
-    def rnums_filt(self):
+    def rnums_filt(self) -> np.ndarray:
         """Get atom indexes for just the reactant tokens, without the [CLS].
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -260,7 +260,7 @@ class AttentionScorer:
         return self.rnums[1:]
 
     @property
-    def rnums_atoms(self):
+    def rnums_atoms(self) -> np.ndarray:
         """Get atom indexes for the reactant ATOMS, without the [CLS].
 
         Numbers in this vector that are >= 0 are atoms, whereas indexes == -1 represent special tokens (e.g., bonds, parens, [CLS])
@@ -270,7 +270,7 @@ class AttentionScorer:
         return self._rnums_atoms
 
     @property
-    def nreactant_atoms(self):
+    def nreactant_atoms(self) -> int:
         """The number of atoms in the reactants"""
         if self._nreactant_atoms is None:
             self._nreactant_atoms = len(self.rnums_atoms)
@@ -278,7 +278,7 @@ class AttentionScorer:
         return self._nreactant_atoms
 
     @property
-    def nproduct_atoms(self):
+    def nproduct_atoms(self) -> int:
         """The number of atoms in the product"""
         if self._nproduct_atoms is None:
             self._nproduct_atoms = len(self.pnums_atoms)
@@ -286,22 +286,22 @@ class AttentionScorer:
         return self._nproduct_atoms
 
     @property
-    def rtokens(self):
+    def rtokens(self) -> List[str]:
         """Just the reactant tokens"""
         return self.tokens[self._reactant_inds]
 
     @property
-    def rtokens_filt(self):
+    def rtokens_filt(self) -> List[str]:
         """Reactant tokens without special tokens"""
         return self.rtokens[1:]
 
     @property
-    def ptokens(self):
+    def ptokens(self) -> List[str]:
         """Just the product tokens"""
         return self.tokens[self._product_inds]
 
     @property
-    def ptokens_filt(self):
+    def ptokens_filt(self) -> List[str]:
         """Product tokens without special tokens"""
         return self.ptokens[:-1]
 
@@ -331,7 +331,7 @@ class AttentionScorer:
         """Get the atom indexes neighboring the desired atom"""
         return np.nonzero(self.adjacency_matrix[atom_num])[0]
 
-    def get_precursors_atom_types(self):
+    def get_precursors_atom_types(self) -> List[int]:
         """Convert reactants into their atomic numbers"""
         if self._precursors_atom_types is None:
             self._precursors_atom_types = get_atom_types_smiles(
@@ -339,13 +339,13 @@ class AttentionScorer:
             )
         return self._precursors_atom_types
 
-    def get_product_atom_types(self):
+    def get_product_atom_types(self) -> List[int]:
         """Convert products into their atomic indexes"""
         if self._product_atom_types is None:
             self._product_atom_types = get_atom_types_smiles("".join(self.ptokens[:-1]))
         return self._product_atom_types
 
-    def get_atom_type_mask(self):
+    def get_atom_type_mask(self) -> np.ndarray:
         """Return a mask where only atoms of the same type are True"""
         if self._atom_type_mask is None:
             atom_type_mask = np.zeros(self.combined_attentions_filt_atoms.shape)
@@ -430,7 +430,7 @@ class AttentionScorer:
         return output
 
     def _update_attention_multiplier_matrix(
-        self, product_atom: int, reactant_atom: int
+        self, product_atom: np.signedinteger, reactant_atom: int
     ):
         """Perform the "neighbor multiplier" step of the atom mapping
 
@@ -458,9 +458,9 @@ class AttentionScorer:
                 len(self.pnums_atoms)
             )
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Length of provided tokens"""
         return len(self.tokens)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"AttMapper(`{self.rxn[:50]}...`)"

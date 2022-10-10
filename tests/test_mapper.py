@@ -39,7 +39,7 @@ def test_example_maps(rxn_mapper: RXNMapper):
         },
     ]
 
-    results = rxn_mapper.get_attention_guided_atom_maps(rxns)
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns, detailed_output=True)
     for res, exp in zip(results, expected):
         is_correct_map(res, exp)
 
