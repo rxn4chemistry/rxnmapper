@@ -103,7 +103,7 @@ class RXNMapper:
         rxn_smiles_list: List[str],
         force_layer: Optional[int] = None,
         force_head: Optional[int] = None,
-    ):
+    ) -> List[torch.Tensor]:
         """Extract desired attentions from a given batch of reactions.
 
         Args:
@@ -139,10 +139,7 @@ class RXNMapper:
         selected_attns = torch.mean(selected_attns, dim=[1])
         att_masks = encoded_ids["attention_mask"].to(torch.bool)
 
-        selected_attns = [
-            a[mask][:, mask] for a, mask in zip(selected_attns, att_masks)
-        ]
-        return selected_attns
+        return [a[mask][:, mask] for a, mask in zip(selected_attns, att_masks)]
 
     def tokenize_for_model(self, rxn: str):
         """Tokenize a reaction SMILES with the special tokens needed for the model"""
@@ -261,7 +258,7 @@ class RXNMapper:
                 absolute_product_inds=absolute_product_inds
             )
 
-            mapped_reaction = generate_atom_mapped_reaction_atoms(
+            mapped_reaction, _ = generate_atom_mapped_reaction_atoms(
                 rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
             )
             result = {

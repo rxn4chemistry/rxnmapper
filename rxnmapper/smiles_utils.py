@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 import re
 from functools import partial
-from typing import Any, List
+from typing import Any, List, Optional, Tuple
 
 import numpy as np
 from rdkit import Chem, rdBase
@@ -207,7 +207,7 @@ def tokens_to_smiles(tokens: List[str], special_tokens: List[str]) -> str:
     return "".join([t for t in tokens if t not in bad_toks])
 
 
-def tokens_to_adjacency(tokens: List[str]) -> np.array:
+def tokens_to_adjacency(tokens: List[str]) -> np.ndarray:
     """Convert a tokenized reaction SMILES into a giant adjacency matrix.
 
     Note that this is a large, sparse Block Diagonal matrix of the adjacency matrix for each molecule in the reaction.
@@ -237,43 +237,54 @@ def tokens_to_adjacency(tokens: List[str]) -> np.array:
     return rxn_mask
 
 
-def get_mask_for_tokens(tokens: List[str], special_tokens: List[str] = []) -> List[int]:
+def get_mask_for_tokens(
+    tokens: List[str], special_tokens: Optional[List[str]] = None
+) -> List[int]:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
     e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]
 
     Args:
-        smiles: Smiles string of reaction
-        special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
+        tokens: tokens of the reaction
+        special_tokens: Any special tokens to explicitly not call an atom.
+            E.g. "[CLS]" or "[SEP]". Defaults to the empty string.
 
     Returns:
         Binary mask as a list where non-zero elements represent atoms
     """
+    if special_tokens is None:
+        special_tokens = []
+
     check_atom = partial(is_atom, special_tokens=special_tokens)
 
     atom_token_mask = [1 if check_atom(t) else 0 for t in tokens]
     return atom_token_mask
 
 
-def tok_mask(tokens: List[str], special_tokens: List[str] = BAD_TOKS) -> np.array:
+def tok_mask(
+    tokens: List[str], special_tokens: Optional[List[str]] = None
+) -> np.ndarray:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
     e.g. c1ccncc1 would give [1, 0, 1, 1, 1, 1, 1, 0]
 
     Args:
-        smiles: Smiles string of reaction
-        special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
+        tokens: tokens of the reaction
+        special_tokens: Any special tokens to explicitly not call an atom.
+            E.g. "[CLS]" or "[SEP]". Defaults to BAD_TOKS.
 
     Returns:
         Binary mask as a boolean numpy array where True elements represent atoms
     """
+    if special_tokens is None:
+        special_tokens = BAD_TOKS
     mask = get_mask_for_tokens(tokens, special_tokens=special_tokens)
-    return np.array(mask).astype(np.bool)
+    return np.array(mask).astype(bool)
 
 
-def get_atom_tokens_mask(smiles: str, special_tokens: List[str] = []):
+def get_atom_tokens_mask(smiles: str, special_tokens: Optional[List[str]] = None):
     """Return a mask for a smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
@@ -281,12 +292,15 @@ def get_atom_tokens_mask(smiles: str, special_tokens: List[str] = []):
 
     Args:
         smiles: Smiles string of reaction
-        special_tokens: Any special tokens to explicitly not call an atom. E.g. "[CLS]" or "[SEP]"
+        special_tokens: Any special tokens to explicitly not call an atom.
+            E.g. "[CLS]" or "[SEP]". Defaults to the empty string.
 
     Returns:
         Binary mask as a list where non-zero elements represent atoms
     """
     tokens = tokenize(smiles)
+    if special_tokens is None:
+        special_tokens = []
     return get_mask_for_tokens(tokens, special_tokens)
 
 
@@ -325,7 +339,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
 
 def generate_atom_mapped_reaction_atoms(
     rxn: str, product_atom_maps, expected_atom_maps=None, canonical: bool = False
-) -> ReactionEquation:
+) -> Tuple[ReactionEquation, List[int]]:
     """
     Generate atom-mapped reaction from unmapped reaction and
     product-2-reactant atoms mapping vector.
@@ -392,10 +406,7 @@ def generate_atom_mapped_reaction_atoms(
         atom_mapped_precursors_list, [], atom_mapped_products_list
     )
 
-    if expected_atom_maps is not None:
-        return atom_mapped_rxn, differing_maps
-
-    return atom_mapped_rxn
+    return atom_mapped_rxn, differing_maps
 
 
 def canonicalize_smi(smi: str, remove_mapping: bool = False) -> str:
