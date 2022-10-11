@@ -258,7 +258,7 @@ class RXNMapper:
                 absolute_product_inds=absolute_product_inds
             )
 
-            mapped_reaction = generate_atom_mapped_reaction_atoms(
+            mapped_reaction, _ = generate_atom_mapped_reaction_atoms(
                 rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
             )
             result = {

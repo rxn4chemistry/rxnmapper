@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 import re
 from functools import partial
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 
 import numpy as np
 from rdkit import Chem, rdBase
@@ -339,7 +339,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
 
 def generate_atom_mapped_reaction_atoms(
     rxn: str, product_atom_maps, expected_atom_maps=None, canonical: bool = False
-) -> ReactionEquation:
+) -> Tuple[ReactionEquation, List[int]]:
     """
     Generate atom-mapped reaction from unmapped reaction and
     product-2-reactant atoms mapping vector.
@@ -406,10 +406,7 @@ def generate_atom_mapped_reaction_atoms(
         atom_mapped_precursors_list, [], atom_mapped_products_list
     )
 
-    if expected_atom_maps is not None:
-        return atom_mapped_rxn, differing_maps
-
-    return atom_mapped_rxn
+    return atom_mapped_rxn, differing_maps
 
 
 def canonicalize_smi(smi: str, remove_mapping: bool = False) -> str:
