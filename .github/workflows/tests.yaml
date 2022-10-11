@@ -22,5 +22,7 @@ jobs:
       run: python -m isort --check --diff .
     - name: Check flake8
       run: python -m flake8 .
+    - name: Run mypy
+      run: python -m mypy .
     - name: Run pytests
       run: python -m pytest
