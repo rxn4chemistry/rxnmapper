@@ -237,7 +237,9 @@ def tokens_to_adjacency(tokens: List[str]) -> np.ndarray:
     return rxn_mask
 
 
-def get_mask_for_tokens(tokens: List[str], special_tokens: Optional[List[str]] = None) -> List[int]:
+def get_mask_for_tokens(
+    tokens: List[str], special_tokens: Optional[List[str]] = None
+) -> List[int]:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
@@ -260,7 +262,9 @@ def get_mask_for_tokens(tokens: List[str], special_tokens: Optional[List[str]] =
     return atom_token_mask
 
 
-def tok_mask(tokens: List[str], special_tokens: Optional[List[str]] = None) -> np.ndarray:
+def tok_mask(
+    tokens: List[str], special_tokens: Optional[List[str]] = None
+) -> np.ndarray:
     """Return a mask for a tokenized smiles, where atom tokens
     are converted to 1 and other tokens to 0.
 
