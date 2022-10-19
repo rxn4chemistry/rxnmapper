@@ -13,9 +13,7 @@ jobs:
       with:
         python-version: 3.7
     - name: Install dependencies
-      run: pip install -e .[dev]
-    - name: Install RDKit
-      run: pip install rdkit
+      run: pip install -e .[dev,rdkit]
     - name: Check black
       run: python -m black --check --diff --color .
     - name: Check isort

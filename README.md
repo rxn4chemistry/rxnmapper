@@ -27,8 +27,8 @@ pip install -e .
 
 ### RDkit
 
-In both installation settings above, the `RDKit` dependency is not installed automatically.
-It can be installed via Conda or Pypi:
+In both installation settings above, the `RDKit` dependency is not installed automatically, unless you include the extra when installing: `pip install "rxmapper[rdkit]"`.
+It can also be installed via Conda or Pypi:
 
 ```bash
 # Install RDKit from Conda
