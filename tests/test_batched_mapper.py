@@ -37,13 +37,15 @@ def test_normal_behavior(batched_mapper: BatchedMapper) -> None:
 
 def test_error(batched_mapper: BatchedMapper) -> None:
     # When there is an error, the placeholder is returned instead
+
+    too_long = ".".join(itertools.repeat("ClCCl", 200)) + ".CCC[O-]~[Na+].BrCC>>CCOCCC"
+    invalid_symbol = "AAgCC[O-]~[Na+].BrCC>>C(C)COCC"
     rxns = [
         "CC[O-]~[Na+].BrCC>>CCOCC",
-        ".".join(itertools.repeat("ClCCl", 200))
-        + ".CCC[O-]~[Na+].BrCC>>CCOCCC",  # too long
+        too_long,
         "CC[O-].[Na+].BrCC>>CCOCC |f:0.1|",
         "NCC[O-]~[Na+].BrCC>>NCCOCC",
-        "AAgCC[O-]~[Na+].BrCC>>C(C)COCC",  # invalid symbol
+        invalid_symbol,
     ]
 
     results = batched_mapper.map_reactions(rxns)
@@ -57,6 +59,6 @@ def test_error(batched_mapper: BatchedMapper) -> None:
         ">>",
     ]
 
-
-# TODO: assert that does it lazily?
-# TODO: check when error raised!
+    # as comparison: RxnMapper would fail:
+    with pytest.raises(Exception):
+        batched_mapper.mapper.get_attention_guided_atom_maps([too_long])
