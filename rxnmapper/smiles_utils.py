@@ -489,7 +489,6 @@ def process_reaction_with_product_maps_atoms(rxn, skip_if_not_in_precursors=Fals
     warnings = []
 
     for p_map in product_atom_maps:
-
         if skip_if_not_in_precursors and p_map not in precursors_atom_maps:
             products_maps.append(-1)
         elif int(p_map) == 0:

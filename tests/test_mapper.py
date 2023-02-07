@@ -1,7 +1,8 @@
-import numpy as np
 import pytest
 
 from rxnmapper import RXNMapper
+
+from .utils import assert_correct_maps
 
 
 @pytest.fixture(scope="module")
@@ -11,11 +12,6 @@ def rxn_mapper() -> RXNMapper:
     do not need to be loaded multiple times.
     """
     return RXNMapper()
-
-
-def is_correct_map(result, exp):
-    assert result["mapped_rxn"] == exp["mapped_rxn"]
-    assert np.isclose(result["confidence"], exp["confidence"])
 
 
 def test_example_maps(rxn_mapper: RXNMapper):
@@ -40,8 +36,7 @@ def test_example_maps(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
 
 
 def test_fragment_bond(rxn_mapper: RXNMapper):
@@ -54,8 +49,7 @@ def test_fragment_bond(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
 
 
 def test_extended_smiles_format(rxn_mapper: RXNMapper):
@@ -68,8 +62,7 @@ def test_extended_smiles_format(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
 
 
 def test_no_canonicalization(rxn_mapper: RXNMapper):
@@ -85,8 +78,7 @@ def test_no_canonicalization(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
 
 
 def test_reaction_with_invalid_valence(rxn_mapper: RXNMapper):
@@ -101,8 +93,7 @@ def test_reaction_with_invalid_valence(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
 
 
 def test_multiple_products(rxn_mapper: RXNMapper):
@@ -116,5 +107,4 @@ def test_multiple_products(rxn_mapper: RXNMapper):
     ]
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
-    for res, exp in zip(results, expected):
-        is_correct_map(res, exp)
+    assert_correct_maps(results, expected)
