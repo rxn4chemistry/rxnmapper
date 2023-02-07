@@ -60,6 +60,18 @@ The results contain the mapped reactions and confidence scores:
   'confidence': 0.9704424331552834}]
 ```
 
+To account for batching and error handling automatically, you can use `BatchedMapper`
+```python
+from rxnmapper import BatchedMapper
+rxn_mapper = BatchedMapper(batch_size=32)
+rxns = ['CC[O-]~[Na+].BrCC>>CCOCC', 'invalid>>reaction']
+
+# The following calls work with input of arbitrary size. Also, they do not raise 
+# any exceptions but will return ">>" or an empty dictionary for the second reaction.
+results = list(rxn_mapper.map_reactions(rxns))  # results as strings directly
+results = list(rxn_mapper.map_reactions_with_info(rxns))  # results as dictionaries (as above)
+```
+
 ### Testing
 
 You can run the examples above with the test suite as well:
