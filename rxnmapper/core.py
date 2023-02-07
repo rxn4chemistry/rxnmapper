@@ -159,7 +159,7 @@ class RXNMapper:
         absolute_product_inds: bool = False,
         force_layer: Optional[int] = None,
         force_head: Optional[int] = None,
-    ):
+    ) -> List[Dict[str, Any]]:
         """Generate atom-mapping for reactions.
 
         Args:

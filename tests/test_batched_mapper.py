@@ -3,6 +3,7 @@ import itertools
 import pytest
 
 from rxnmapper.batched_mapper import BatchedMapper
+from tests.utils import assert_correct_maps
 
 
 @pytest.fixture(scope="module")
@@ -33,6 +34,26 @@ def test_normal_behavior(batched_mapper: BatchedMapper) -> None:
         "[NH2:1][CH2:2][CH2:3][O-:4]~[Na+].Br[CH2:5][CH3:6]>>[NH2:1][CH2:2][CH2:3][O:4][CH2:5][CH3:6]",
         "[CH2:1]([CH3:2])[CH2:3][O-:4]~[Na+].Br[CH2:5][CH3:6]>>[CH2:1]([CH3:2])[CH2:3][O:4][CH2:5][CH3:6]",
     ]
+
+
+def test_map_with_info(batched_mapper: BatchedMapper) -> None:
+    # Simple example with 5 reactions, given in different RXN formats
+    rxns = [
+        "CC[O-]~[Na+].BrCC>>CCOCC",
+        "CCC[O-]~[Na+].BrCC>>CCOCCC",
+        "CC[O-].[Na+].BrCC>>CCOCC |f:0.1|",
+        "NCC[O-]~[Na+].BrCC>>NCCOCC",
+        "C(C)C[O-]~[Na+].BrCC>>C(C)COCC",
+    ]
+
+    for detailed in [True, False]:
+        results = batched_mapper.map_reactions_with_info(rxns, detailed=detailed)
+        results_with_original_mapper = (
+            batched_mapper.mapper.get_attention_guided_atom_maps(
+                rxns, canonicalize_rxns=False, detailed_output=detailed
+            )
+        )
+        assert_correct_maps(results, list(results_with_original_mapper))
 
 
 def test_error(batched_mapper: BatchedMapper) -> None:
