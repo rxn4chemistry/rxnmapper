@@ -3,7 +3,8 @@ import itertools
 import pytest
 
 from rxnmapper.batched_mapper import BatchedMapper
-from tests.utils import assert_correct_maps
+
+from .utils import assert_correct_maps
 
 
 @pytest.fixture(scope="module")

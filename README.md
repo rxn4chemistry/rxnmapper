@@ -60,7 +60,7 @@ The results contain the mapped reactions and confidence scores:
   'confidence': 0.9704424331552834}]
 ```
 
-To account for batching and error handling automatically, you can use `BatchedMapper`
+To account for batching and error handling automatically, you can use `BatchedMapper` instead:
 ```python
 from rxnmapper import BatchedMapper
 rxn_mapper = BatchedMapper(batch_size=32)

@@ -1,7 +1,8 @@
 import logging
-from typing import Iterable, Iterator, List, Any, Dict
+from typing import Any, Dict, Iterable, Iterator, List
 
 from rxn.utilities.containers import chunker
+
 from .core import RXNMapper
 
 logger = logging.getLogger(__name__)
@@ -46,14 +47,14 @@ class BatchedMapper:
     def map_reactions_with_info(
         self, reaction_smiles: Iterable[str], detailed: bool = False
     ) -> Iterator[ResultWithInfo]:
-        """Map the given reactions, returning the mapped SMILES strings.
+        """Map the given reactions, returning the results as dictionaries.
 
         Args:
             reaction_smiles: reaction SMILES strings to map.
             detailed: detailed output or not.
 
         Returns:
-            iterator over dictionaries (in the format returned by the RxnMapper class);
+            iterator over dictionaries (in the format returned by the RXNMapper class);
             an empty dictionary is returned for the entries that failed.
         """
         for rxns_chunk in chunker(reaction_smiles, chunk_size=self.batch_size):
