@@ -65,9 +65,9 @@ class BatchedMapper:
     ) -> Iterator[ResultWithInfo]:
         try:
             yield from self._try_map_reaction_batch(reaction_batch, detailed=detailed)
-        except Exception:
+        except Exception as e:
             logger.warning(
-                f"Error while mapping chunk of {len(reaction_batch)} reactions. "
+                f"Error while mapping chunk of {len(reaction_batch)} reactions: {e}. "
                 "Mapping them individually."
             )
             yield from self._map_reactions_one_by_one(reaction_batch, detailed=detailed)
