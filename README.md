@@ -9,7 +9,7 @@ Enable robust atom mapping on valid reaction SMILES. The atom-mapping informatio
 
 ### From pip
 ```console
-conda create -n rxnmapper python=3.6 -y
+conda create -n rxnmapper python=3.9 -y
 conda activate rxnmapper
 pip install rxnmapper
 ```
