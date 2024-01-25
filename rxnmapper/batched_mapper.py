@@ -29,6 +29,7 @@ class BatchedMapper:
         model_type: str = "albert",
         canonicalize: bool = False,
         placeholder_for_invalid: str = ">>",
+        gpu_id: int = 0
     ):
         """
         Args:
@@ -56,6 +57,7 @@ class BatchedMapper:
                 model_type=model_type,
                 attention_multiplier=attention_multiplier,
             ),
+            gpu_id=gpu_id
         )
         self.batch_size = batch_size
         self.canonicalize = canonicalize
