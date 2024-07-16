@@ -1,4 +1,5 @@
 """Contains functions needed to process reaction SMILES and their tokens"""
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
@@ -72,7 +73,7 @@ def get_atom_types_smiles(smiles: str) -> List[int]:
     # If `smiles` is a set of molecules, it may contain a "~".
     smiles_mol = smiles_to_mol(smiles.replace("~", "."), sanitize=False)
 
-    atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]
+    atom_types = [atom.GetAtomicNum() for atom in smiles_mol.GetAtoms()]  # type: ignore[call-arg]
 
     return atom_types
 
@@ -315,7 +316,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
 
     """
     mol = smiles_to_mol(smi, sanitize=False)
-    for atom in mol.GetAtoms():
+    for atom in mol.GetAtoms():  # type: ignore[call-arg]
         if atom.HasProp("molAtomMapNumber"):
             atom_map = atom.GetAtomMapNum()
             atom.SetProp("atom_map", str(atom_map))
@@ -329,7 +330,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
         ]
     )
 
-    atom_maps_canonical = [mol.GetAtoms()[idx].GetProp("atom_map") for idx in order]
+    atom_maps_canonical = [mol.GetAtoms()[idx].GetProp("atom_map") for idx in order]  # type: ignore[call-arg]
 
     if not return_equivalent_atoms:
         return (can_smi, atom_maps_canonical)
@@ -366,7 +367,7 @@ def generate_atom_mapped_reaction_atoms(
     i = -1
     atom_mapped_precursors_list = []
     for precursor_mol in precursors_mols:
-        for atom in precursor_mol.GetAtoms():
+        for atom in precursor_mol.GetAtoms():  # type: ignore[call-arg]
             i += 1
             if i in product_atom_maps:
                 # atom maps start at an index of 1
@@ -394,7 +395,7 @@ def generate_atom_mapped_reaction_atoms(
     i = -1
     atom_mapped_products_list = []
     for products_mol in products_mols:
-        for atom in products_mol.GetAtoms():
+        for atom in products_mol.GetAtoms():  # type: ignore[call-arg]
             i += 1
             atom_map = product_mapping_dict.get(i, i + 1)
             atom.SetProp("molAtomMapNumber", str(atom_map))

@@ -7,6 +7,7 @@ This module contains all of the helper methods needed to convert the attention m
 separating on reactants and products, including special tokens and not including special tokens, in the atom
 domain / in the token domain, and accounting for adjacent atoms in molecules.
 """
+
 import logging
 from typing import List, Optional
 
