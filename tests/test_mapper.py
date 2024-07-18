@@ -108,3 +108,16 @@ def test_multiple_products(rxn_mapper: RXNMapper):
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns)
     assert_correct_maps(results, expected)
+
+
+def test_reaction_with_dative_bond(rxn_mapper: RXNMapper):
+    rxns = ["COC(=O)CCBr.O=C[O-]->[K+]>>COC(=O)CCOC(=O)C"]
+    expected = [
+        {
+            "mapped_rxn": "[CH3:1][O:2][C:3](=[O:4])[CH2:5][CH2:6]Br.[O:9]=[CH:8][O-:7]->[K+]>>[CH3:1][O:2][C:3](=[O:4])[CH2:5][CH2:6][O:7][C:8](=[O:9])[CH3:10]",
+            "confidence": 0.9322116305783666,
+        }
+    ]
+
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
+    assert_correct_maps(results, expected)
