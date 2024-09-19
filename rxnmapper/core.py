@@ -128,6 +128,14 @@ class RXNMapper:
             return_tensors="pt",
         )
         parsed_input = {k: v.to(self.device) for k, v in encoded_ids.items()}
+
+        max_input_length = parsed_input["input_ids"].shape[1]
+        max_supported_by_model = self.model.config.max_position_embeddings
+        if max_input_length > max_supported_by_model:
+            raise ValueError(
+                f"Reaction SMILES has {max_input_length} tokens, should be at most {max_supported_by_model}."
+            )
+
         with torch.no_grad():
             output = self.model(**parsed_input)
         attentions = output[2]
