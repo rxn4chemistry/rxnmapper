@@ -121,3 +121,19 @@ def test_reaction_with_dative_bond(rxn_mapper: RXNMapper):
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
     assert_correct_maps(results, expected)
+
+
+def test_reaction_with_asterisks(rxn_mapper: RXNMapper):
+    # Some reaction SMILES contains asterisks as atom placeholders
+    # especially if some of the asterisks were inside brackets.
+    rxns = ["[1*]C=C.O>>*CCO"]
+
+    expected = [
+        {
+            "mapped_rxn": "[1*:1][CH:2]=[CH2:3].[OH2:4]>>[*:1][CH2:2][CH2:3][OH:4]",
+            "confidence": 0.9988284870307568,
+        }
+    ]
+
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
+    assert_correct_maps(results, expected)
