@@ -4,12 +4,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import logging
 import os
+from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 import numpy as np
 import pkg_resources
 import torch
-from contextlib import contextmanager
 from rxn.chemutils.reaction_equation import ReactionEquation
 from rxn.chemutils.reaction_smiles import (
     ReactionFormat,
