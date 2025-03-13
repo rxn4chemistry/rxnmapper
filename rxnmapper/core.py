@@ -9,6 +9,7 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 import numpy as np
 import pkg_resources
 import torch
+from contextlib import contextmanager
 from rxn.chemutils.reaction_equation import ReactionEquation
 from rxn.chemutils.reaction_smiles import (
     ReactionFormat,
@@ -26,6 +27,17 @@ MODEL_TYPE_DICT = {"bert": BertModel, "albert": AlbertModel, "roberta": RobertaM
 
 _logger = logging.getLogger(__name__)
 _logger.addHandler(logging.NullHandler())
+
+
+@contextmanager
+def suppress_transformers_warnings():
+    logger = logging.getLogger("transformers")
+    previous_level = logger.level
+    logger.setLevel(logging.ERROR)
+    try:
+        yield
+    finally:
+        logger.setLevel(previous_level)
 
 
 class RXNMapper:
@@ -136,8 +148,11 @@ class RXNMapper:
                 f"Reaction SMILES has {max_input_length} tokens, should be at most {max_supported_by_model}."
             )
 
-        with torch.no_grad():
-            output = self.model(**parsed_input)
+        # suppress warning that suggests setting "attn_implementation"; doing
+        # so would break compatibility for old `transformers` versions.
+        with suppress_transformers_warnings():
+            with torch.no_grad():
+                output = self.model(**parsed_input)
         attentions = output[2]
         selected_attns = torch.cat(
             [a.unsqueeze(1) for i, a in enumerate(attentions) if i in use_layers],
