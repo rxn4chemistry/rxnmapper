@@ -11,6 +11,7 @@ plugins = [
 [[tool.mypy.overrides]]
 module = [
     "pandas.*",
+    "pkg_resources.*",
     "rdkit.*",
     "scipy.*",
     "tqdm.*",
