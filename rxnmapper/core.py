@@ -293,7 +293,7 @@ class RXNMapper:
                 result["pxr_confidences"] = output["confidences"]
                 result["mapping_tuples"] = output["mapping_tuples"]
                 result["pxrrxp_attns"] = output["pxrrxp_attns"]
-                result["tokensxtokens_attns"] = tokensxtokens_attn
+                result["tokensxtokens_attns"] = tokensxtokens_attn  # type: ignore[assignment]
                 result["tokens"] = just_tokens
 
             yield mapped_reaction, result
