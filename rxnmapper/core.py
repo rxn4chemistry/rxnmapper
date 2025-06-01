@@ -286,7 +286,7 @@ class RXNMapper:
                 rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
             )
             result = {
-                "confidence": np.prod(output["confidences"]),
+                "confidence": float(np.prod(output["confidences"])),
             }
             if detailed_output:
                 result["pxr_mapping_vector"] = output["pxr_mapping_vector"]
