@@ -286,14 +286,14 @@ class RXNMapper:
                 rxn, output["pxr_mapping_vector"], canonical=canonicalize_rxns
             )
             result = {
-                "confidence": np.prod(output["confidences"]),
+                "confidence": float(np.prod(output["confidences"])),
             }
             if detailed_output:
                 result["pxr_mapping_vector"] = output["pxr_mapping_vector"]
                 result["pxr_confidences"] = output["confidences"]
                 result["mapping_tuples"] = output["mapping_tuples"]
                 result["pxrrxp_attns"] = output["pxrrxp_attns"]
-                result["tokensxtokens_attns"] = tokensxtokens_attn
+                result["tokensxtokens_attns"] = tokensxtokens_attn  # type: ignore[assignment]
                 result["tokens"] = just_tokens
 
             yield mapped_reaction, result
