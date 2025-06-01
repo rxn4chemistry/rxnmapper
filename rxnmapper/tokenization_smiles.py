@@ -49,7 +49,7 @@ class SmilesTokenizer(BertTokenizer):
         self.ids_to_tokens = collections.OrderedDict(
             [(ids, tok) for tok, ids in self.vocab.items()]
         )
-        self.basic_tokenizer = BasicSmilesTokenizer()
+        self.basic_tokenizer = BasicSmilesTokenizer()  # type: ignore[assignment]
         self.init_kwargs["model_max_length"] = self.model_max_length
 
     @property
@@ -60,7 +60,7 @@ class SmilesTokenizer(BertTokenizer):
     def vocab_list(self):
         return list(self.vocab.keys())
 
-    def _tokenize(self, text):
+    def _tokenize(self, text):  # type: ignore[override]
         split_tokens = [token for token in self.basic_tokenizer.tokenize(text)]
         return split_tokens
 
@@ -120,7 +120,7 @@ class SmilesTokenizer(BertTokenizer):
         else:
             return padding + token_ids
 
-    def save_vocabulary(self, vocab_path):
+    def save_vocabulary(self, vocab_path):  # type: ignore[override]
         """Save the tokenizer vocabulary to a file."""
         index = 0
         vocab_file = vocab_path

@@ -89,7 +89,7 @@ def is_atom(token: str, special_tokens: List[str] = BAD_TOKS) -> bool:
         bool: True if atom, False if not
     """
     bad_toks = set(special_tokens)
-    normal_atom = token[0].isalpha() or token[0] == "["
+    normal_atom = token[0].isalpha() or token[0] == "[" or "*" in token
     is_bad = token in bad_toks
     return (not is_bad) and normal_atom
 

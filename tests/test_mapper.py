@@ -121,3 +121,31 @@ def test_reaction_with_dative_bond(rxn_mapper: RXNMapper):
 
     results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
     assert_correct_maps(results, expected)
+
+
+def test_reaction_with_asterisks(rxn_mapper: RXNMapper):
+    # Some reaction SMILES contains asterisks as atom placeholders
+    # especially if some of the asterisks were inside brackets.
+    rxns = ["[1*]C=C.O>>*CCO"]
+
+    expected = [
+        {
+            "mapped_rxn": "[1*:1][CH:2]=[CH2:3].[OH2:4]>>[*:1][CH2:2][CH2:3][OH:4]",
+            "confidence": 0.9988284870307568,
+        }
+    ]
+
+    results = rxn_mapper.get_attention_guided_atom_maps(rxns, canonicalize_rxns=False)
+    assert_correct_maps(results, expected)
+
+
+def test_too_long_reaction_smiles_produce_exception_with_understandable_error_message(
+    rxn_mapper: RXNMapper,
+):
+    # dummy reaction with 1 + 3 + 500 * 2 + 3 + 1 = 1008 tokens
+    rxn = "C=C" + "[C+][C-]" * 500 + ">>CC"
+
+    with pytest.raises(ValueError) as excinfo:
+        _ = rxn_mapper.get_attention_guided_atom_maps([rxn], canonicalize_rxns=False)
+
+    assert "Reaction SMILES has 1008 tokens, should be" in str(excinfo.value)
