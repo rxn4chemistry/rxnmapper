@@ -7,37 +7,27 @@ Enable robust atom mapping on valid reaction SMILES. The atom-mapping informatio
 
 ## Installation
 
-### From pip
-```console
-conda create -n rxnmapper python=3.6 -y
-conda activate rxnmapper
-pip install rxnmapper
-```
-
-### From github
-You can install the package and setup the environment directly from github using:
-
-```console
-git clone https://github.com/rxn4chemistry/rxnmapper.git 
-cd rxnmapper
-conda create -n rxnmapper python=3.6 -y
-conda activate rxnmapper
-pip install -e .
-```
-
-### RDkit
-
-In both installation settings above, the `RDKit` dependency is not installed automatically, unless you include the extra when installing: `pip install "rxmapper[rdkit]"`.
-It can also be installed via Conda or Pypi:
+### Create virtual environment (optional)
 
 ```bash
-# Install RDKit from Conda
-conda install -c conda-forge rdkit
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-# Install RDKit from Pypi
-pip install rdkit
-# for Python<3.7
-# pip install rdkit-pypi
+### Install from pip
+
+```bash
+pip install "rxnmapper[rdkit]"
+```
+
+You can leave out `[rdkit]` if RDKit is already available in your Python environment.
+
+### From source
+
+```bash
+git clone https://github.com/rxn4chemistry/rxnmapper.git
+cd rxnmapper
+pip install -e ".[rdkit]"
 ```
 
 ## Usage
@@ -74,10 +64,12 @@ results = list(rxn_mapper.map_reactions_with_info(rxns))  # results as dictionar
 
 ### Testing
 
-You can run the examples above with the test suite as well:
+You can run the test suite with:
 
-1. In your Conda environment: `pip install -e .[dev]`
-2. `pytest tests` from the root 
+```bash
+pip install -e .[dev,rdkit]
+pytest tests
+```
 
 ## Examples
 
