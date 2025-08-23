@@ -36,7 +36,7 @@ pip install -e ".[rdkit]"
 
 ```python
 from rxnmapper import RXNMapper
-rxn_mapper = RXNMapper()
+rxn_mapper = RXNMapper(gpu_id=1) # to specify which gpu to use to load the model, in case of multi gpu system.
 rxns = ['CC(C)S.CN(C)C=O.Fc1cccnc1F.O=C([O-])[O-].[K+].[K+]>>CC(C)Sc1ncccc1F', 'C1COCCO1.CC(C)(C)OC(=O)CONC(=O)NCc1cccc2ccccc12.Cl>>O=C(O)CONC(=O)NCc1cccc2ccccc12']
 results = rxn_mapper.get_attention_guided_atom_maps(rxns)
 ```
@@ -53,7 +53,7 @@ The results contain the mapped reactions and confidence scores:
 To account for batching and error handling automatically, you can use `BatchedMapper` instead:
 ```python
 from rxnmapper import BatchedMapper
-rxn_mapper = BatchedMapper(batch_size=32)
+rxn_mapper = BatchedMapper(batch_size=32, gpu_id=1) # to specify which gpu to use to load the model, in case of multi gpu system.
 rxns = ['CC[O-]~[Na+].BrCC>>CCOCC', 'invalid>>reaction']
 
 # The following calls work with input of arbitrary size. Also, they do not raise 

@@ -51,6 +51,7 @@ class RXNMapper:
         self,
         config: Optional[Dict[str, Any]] = None,
         logger: Optional[logging.Logger] = None,
+        gpu_id: int = 0
     ):
         """
         RXNMapper constructor.
@@ -83,7 +84,7 @@ class RXNMapper:
 
         self.logger = logger if logger else _logger
         self.model, self.tokenizer = self._load_model_and_tokenizer()
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:{}".format(gpu_id) if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
     def _load_model_and_tokenizer(self) -> Tuple:
