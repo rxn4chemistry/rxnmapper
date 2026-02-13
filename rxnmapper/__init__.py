@@ -1,7 +1,7 @@
 """rxnmapper initialization."""
 
 __name__ = "rxnmapper"
-__version__ = "0.4.2"  # managed by bump2version
+__version__ = "0.4.3"  # managed by bump2version
 
 
 from .batched_mapper import BatchedMapper
