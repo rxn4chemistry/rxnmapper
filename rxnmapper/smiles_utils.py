@@ -330,7 +330,7 @@ def canonicalize_and_atom_map(smi: str, return_equivalent_atoms=False):
         ]
     )
 
-    atom_maps_canonical = [mol.GetAtoms()[idx].GetProp("atom_map") for idx in order]  # type: ignore[call-arg]
+    atom_maps_canonical = [mol.GetAtoms()[idx].GetProp("atom_map") for idx in order]  # type: ignore[index]
 
     if not return_equivalent_atoms:
         return (can_smi, atom_maps_canonical)

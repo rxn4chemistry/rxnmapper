@@ -1,11 +1,10 @@
 import logging
 from typing import Any, Dict, Iterable, Iterator, List, Optional
 
-import pkg_resources
 from rxn.utilities.containers import chunker
 from rxn.utilities.files import PathLike
 
-from .core import RXNMapper
+from .core import RXNMapper, default_model_path
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -45,9 +44,7 @@ class BatchedMapper:
                 is an issue in the prediction (number of tokens, invalid SMILES, ...).
         """
         if model_path is None:
-            model_path = pkg_resources.resource_filename(
-                "rxnmapper", "models/transformers/albert_heads_8_uspto_all_1310k"
-            )
+            model_path = default_model_path()
         self.mapper = RXNMapper(
             config=dict(
                 model_path=str(model_path),
