@@ -6,15 +6,16 @@ import collections
 import logging
 import os
 import re
+from typing import Dict, List, Optional
 
-from transformers import BertTokenizer
+from transformers import PreTrainedTokenizer
 
 from .smiles_utils import SMI_REGEX_PATTERN
 
 logger = logging.getLogger(__name__)
 
 
-class SmilesTokenizer(BertTokenizer):
+class SmilesTokenizer(PreTrainedTokenizer):
     r"""
     Constructs a SmilesTokenizer.
     Mostly copied from https://github.com/huggingface/transformers
@@ -23,24 +24,25 @@ class SmilesTokenizer(BertTokenizer):
         vocab_file: Path to a SMILES character per line vocabulary file
     """
 
+    vocab_files_names = {"vocab_file": "vocab.txt"}
+    model_input_names = ["input_ids", "token_type_ids", "attention_mask"]
+
     def __init__(
         self,
-        vocab_file,
-        # unk_token="[UNK]",
-        # sep_token="[SEP]",
-        # pad_token="[PAD]",
-        # cls_token="[CLS]",
-        # mask_token="[MASK]",
-        **kwargs
+        vocab_file: Optional[str],
+        unk_token: str = "[UNK]",
+        sep_token: str = "[SEP]",
+        pad_token: str = "[PAD]",
+        cls_token: str = "[CLS]",
+        mask_token: str = "[MASK]",
+        **kwargs,
     ):
-        """Constructs a BertTokenizer.
+        """Constructs a SmilesTokenizer.
 
         Args:
             **vocab_file**: Path to a SMILES character per line vocabulary file
         """
-        super().__init__(vocab_file, **kwargs)
-
-        if not os.path.isfile(vocab_file):
+        if not vocab_file or not os.path.isfile(vocab_file):
             raise ValueError("Can't find a vocab file at path '{}'.".format(vocab_file))
         self.vocab = load_vocab(vocab_file)
         self.highest_unused_index = max(
@@ -49,28 +51,77 @@ class SmilesTokenizer(BertTokenizer):
         self.ids_to_tokens = collections.OrderedDict(
             [(ids, tok) for tok, ids in self.vocab.items()]
         )
-        self.basic_tokenizer = BasicSmilesTokenizer()  # type: ignore[assignment]
+        self.basic_tokenizer = BasicSmilesTokenizer()
+
+        if "max_len" in kwargs and "model_max_length" not in kwargs:
+            kwargs["model_max_length"] = kwargs.pop("max_len")
+
+        super().__init__(
+            unk_token=unk_token,
+            sep_token=sep_token,
+            pad_token=pad_token,
+            cls_token=cls_token,
+            mask_token=mask_token,
+            **kwargs,
+        )
         self.init_kwargs["model_max_length"] = self.model_max_length
 
     @property
-    def vocab_size(self):
+    def vocab_size(self) -> int:
         return len(self.vocab)
 
     @property
-    def vocab_list(self):
+    def vocab_list(self) -> List[str]:
         return list(self.vocab.keys())
 
-    def _tokenize(self, text):  # type: ignore[override]
+    def get_vocab(self) -> Dict[str, int]:
+        return dict(self.vocab, **self.added_tokens_encoder)
+
+    def _tokenize(self, text: str, **kwargs) -> List[str]:  # type: ignore[override]
         split_tokens = [token for token in self.basic_tokenizer.tokenize(text)]
         return split_tokens
 
-    def _convert_token_to_id(self, token):
+    def _convert_token_to_id(self, token: str) -> int:
         """Converts a token (str/unicode) in an id using the vocab."""
         return self.vocab.get(token, self.vocab.get(self.unk_token))
 
-    def _convert_id_to_token(self, index):
+    def _convert_id_to_token(self, index: int) -> str:
         """Converts an index (integer) in a token (string/unicode) using the vocab."""
         return self.ids_to_tokens.get(index, self.unk_token)
+
+    def build_inputs_with_special_tokens(
+        self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
+    ) -> List[int]:
+        if token_ids_1 is None:
+            return [self.cls_token_id] + token_ids_0 + [self.sep_token_id]
+        cls = [self.cls_token_id]
+        sep = [self.sep_token_id]
+        return cls + token_ids_0 + sep + token_ids_1 + sep
+
+    def get_special_tokens_mask(
+        self,
+        token_ids_0: List[int],
+        token_ids_1: Optional[List[int]] = None,
+        already_has_special_tokens: bool = False,
+    ) -> List[int]:
+        if already_has_special_tokens:
+            return super().get_special_tokens_mask(
+                token_ids_0=token_ids_0,
+                token_ids_1=token_ids_1,
+                already_has_special_tokens=True,
+            )
+        if token_ids_1 is not None:
+            return [1] + ([0] * len(token_ids_0)) + [1] + ([0] * len(token_ids_1)) + [1]
+        return [1] + ([0] * len(token_ids_0)) + [1]
+
+    def create_token_type_ids_from_sequences(
+        self, token_ids_0: List[int], token_ids_1: Optional[List[int]] = None
+    ) -> List[int]:
+        sep = [self.sep_token_id]
+        cls = [self.cls_token_id]
+        if token_ids_1 is None:
+            return len(cls + token_ids_0 + sep) * [0]
+        return len(cls + token_ids_0 + sep) * [0] + len(token_ids_1 + sep) * [1]
 
     def convert_tokens_to_string(self, tokens):
         """Converts a sequence of tokens (string) in a single string."""

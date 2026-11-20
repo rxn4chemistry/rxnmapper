@@ -8,7 +8,6 @@ from contextlib import contextmanager
 from typing import Any, Dict, Iterator, List, Optional, Tuple
 
 import numpy as np
-import pkg_resources
 import torch
 from rxn.chemutils.reaction_equation import ReactionEquation
 from rxn.chemutils.reaction_smiles import (
@@ -23,7 +22,17 @@ from .attention import AttentionScorer
 from .smiles_utils import generate_atom_mapped_reaction_atoms, process_reaction
 from .tokenization_smiles import SmilesTokenizer
 
-MODEL_TYPE_DICT = {"bert": BertModel, "albert": AlbertModel, "roberta": RobertaModel}
+MODEL_TYPE_DICT: Dict[str, Any] = {
+    "bert": BertModel,
+    "albert": AlbertModel,
+    "roberta": RobertaModel,
+}
+DEFAULT_MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "models",
+    "transformers",
+    "albert_heads_8_uspto_all_1310k",
+)
 
 _logger = logging.getLogger(__name__)
 _logger.addHandler(logging.NullHandler())
@@ -70,12 +79,7 @@ class RXNMapper:
             config = {}
 
         # Config takes "model_path", "model_type", "attention_multiplier", "head", "layers"
-        self.model_path = config.get(
-            "model_path",
-            pkg_resources.resource_filename(
-                "rxnmapper", "models/transformers/albert_heads_8_uspto_all_1310k"
-            ),
-        )
+        self.model_path = config.get("model_path", DEFAULT_MODEL_PATH)
         self.model_type = config.get("model_type", "albert")
         self.attention_multiplier = config.get("attention_multiplier", 90.0)
         self.head = config.get("head", 5)
@@ -94,12 +98,15 @@ class RXNMapper:
             Tuple: containing model and tokenizer
         """
         model_class = MODEL_TYPE_DICT[self.model_type]
-        model = model_class.from_pretrained(
-            self.model_path,
-            output_attentions=True,
-            output_past=False,
-            output_hidden_states=False,
-        )
+        model_kwargs: Dict[str, Any] = {
+            "output_attentions": True,
+            "output_past": False,
+            "output_hidden_states": False,
+        }
+        if getattr(model_class, "_supports_sdpa", False):
+            model_kwargs["attn_implementation"] = "eager"
+
+        model = model_class.from_pretrained(self.model_path, **model_kwargs)
 
         vocab_path = None
 
@@ -107,7 +114,7 @@ class RXNMapper:
             vocab_path = os.path.join(self.model_path, "vocab.txt")
 
         tokenizer = SmilesTokenizer(
-            vocab_path, max_len=model.config.max_position_embeddings
+            vocab_path, model_max_length=model.config.max_position_embeddings
         )
         return (model, tokenizer)
 
@@ -134,7 +141,7 @@ class RXNMapper:
         else:
             use_head = force_head
 
-        encoded_ids = self.tokenizer.batch_encode_plus(
+        encoded_ids = self.tokenizer(
             rxn_smiles_list,
             padding=True,
             return_tensors="pt",
@@ -148,8 +155,6 @@ class RXNMapper:
                 f"Reaction SMILES has {max_input_length} tokens, should be at most {max_supported_by_model}."
             )
 
-        # suppress warning that suggests setting "attn_implementation"; doing
-        # so would break compatibility for old `transformers` versions.
         with suppress_transformers_warnings():
             with torch.no_grad():
                 output = self.model(**parsed_input)
